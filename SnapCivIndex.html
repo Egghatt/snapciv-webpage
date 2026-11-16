@@ -1,0 +1,1093 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Snap Into Existance Codex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: a field codex. Sticky header with search, a row of chapter tabs, one chapter at a time,
+   and a side sheet that opens on any item, job or building so everything links to everything. */
+:root{
+  --bg:#eceff7; --surface:#ffffff; --surface-2:#e2e6f2; --ink:#151a34; --muted:#565d80; --line:#cbd1e4;
+  --accent:#c42d76; --accent-ink:#ffffff; --gold:#956600; --good:#23874a; --bad:#c23244;
+  --r-common:#69718a; --r-uncommon:#2c8a2a; --r-rare:#1d6ad4; --r-epic:#7840d0; --r-legendary:#9f6c00; --r-mythic:#c81e5f; --r-secret:#0e8f7e; --r-unknown:#cf1f2e;
+  --shadow:0 18px 50px rgba(20,26,60,.18);
+  --display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0b0e21; --surface:#141a38; --surface-2:#1d244b; --ink:#eef0fb; --muted:#a0a7cb; --line:#2c3566;
+  --accent:#ff70b8; --accent-ink:#1b0a16; --gold:#ffcb52; --good:#6fd894; --bad:#ff7a88;
+  --r-common:#c6ccd9; --r-uncommon:#7fd36f; --r-rare:#66abff; --r-epic:#bb8dff; --r-legendary:#ffcf4a; --r-mythic:#ff6a9d; --r-secret:#2ee6c8; --r-unknown:#ff4a58;
+  --shadow:0 18px 50px rgba(0,0,0,.5); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0b0e21; --surface:#141a38; --surface-2:#1d244b; --ink:#eef0fb; --muted:#a0a7cb; --line:#2c3566;
+  --accent:#ff70b8; --accent-ink:#1b0a16; --gold:#ffcb52; --good:#6fd894; --bad:#ff7a88;
+  --r-common:#c6ccd9; --r-uncommon:#7fd36f; --r-rare:#66abff; --r-epic:#bb8dff; --r-legendary:#ffcf4a; --r-mythic:#ff6a9d; --r-secret:#2ee6c8; --r-unknown:#ff4a58;
+  --shadow:0 18px 50px rgba(0,0,0,.5); color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.15}
+h2{font-size:1.9rem}
+h3{font-size:1.2rem}
+p{margin:0}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.toprow{display:flex;gap:16px;align-items:center;padding-block:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand h1{font-size:1.45rem;white-space:nowrap}
+.brand .ver{font-size:.72rem;font-weight:800;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.snapmark{width:30px;height:30px;flex:none}
+.search{position:relative;flex:1 1 280px;min-width:0}
+.search input{width:100%;font:inherit;font-weight:600;padding:10px 14px 10px 38px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.search input:focus{border-color:var(--accent);outline:none}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted)}
+.results{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);max-height:min(60vh,440px);overflow:auto;padding:6px}
+.results button{display:flex;width:100%;gap:10px;align-items:center;text-align:left;background:none;border:0;border-radius:10px;padding:8px 10px;cursor:pointer}
+.results button:hover,.results button.on{background:var(--surface-2)}
+.results .kind{margin-left:auto;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.results .none{padding:12px;color:var(--muted)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-block:0 10px;scrollbar-width:thin}
+.tabs button{flex:none;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:800;font-size:.86rem;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+main{padding-block:28px 64px}
+section.chapter{display:grid;gap:22px}
+.lede{max-width:68ch;font-size:1.04rem}
+.eyebrow{font-size:.74rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.head{display:grid;gap:8px}
+
+/* rarity gem */
+.gem{display:inline-block;width:.62em;height:.62em;transform:rotate(45deg);border-radius:2px;background:var(--rc,var(--r-common));flex:none;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--rc) 35%,transparent)}
+.r-Common{--rc:var(--r-common)}.r-Uncommon{--rc:var(--r-uncommon)}.r-Rare{--rc:var(--r-rare)}.r-Epic{--rc:var(--r-epic)}.r-Legendary{--rc:var(--r-legendary)}.r-Mythic{--rc:var(--r-mythic)}.r-Secret{--rc:var(--r-secret)}.r-Unknown{--rc:var(--r-unknown)}
+.rtext{color:var(--rc);font-weight:800}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:2px 10px;font-size:.84rem;font-weight:700;white-space:nowrap}
+button.chip{cursor:pointer}
+button.chip:hover{border-color:var(--accent)}
+.chip .q{color:var(--muted);font-weight:800}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.filters .flab{font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.filters button{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:4px 11px;font-weight:800;font-size:.84rem;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.filters button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+
+/* grids of tiles */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tile{display:grid;gap:4px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;min-width:0}
+.tile:hover{border-color:var(--rc,var(--accent));transform:translateY(-1px)}
+.tile .nm{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1rem}
+.tile .sub{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}
+.count{font-size:.86rem;color:var(--muted);font-weight:700}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.cols > *{min-width:0}
+.stack{display:grid;gap:10px}
+ul.plain{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.dots{margin:0;padding-left:1.1em;display:grid;gap:4px}
+
+/* the loop */
+.loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;counter-reset:step}
+.loop li{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:4px;counter-increment:step;position:relative}
+.loop li::before{content:counter(step);font-family:var(--display);font-size:1.6rem;color:var(--accent);line-height:1}
+.loop b{font-size:1rem}
+.loop span{font-size:.86rem;color:var(--muted)}
+.loop ol{margin:0;padding:0;display:contents}
+
+/* tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:800;background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:var(--surface-2)}
+
+/* snap lab */
+.ladder{display:flex;height:34px;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
+.ladder div{background:var(--rc);min-width:2px;transition:flex-basis .35s ease}
+.ladderkey{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.86rem}
+.ladderkey span{display:inline-flex;gap:6px;align-items:center;font-weight:700}
+.lab{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.lab{grid-template-columns:1fr}}
+.ctrl{display:grid;gap:12px}
+.ctrl label{display:grid;gap:4px;font-weight:700;font-size:.9rem}
+.ctrl .row{display:flex;justify-content:space-between;gap:10px}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctrl .toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:.9rem;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:var(--accent)}
+.bigluck{font-family:var(--display);font-size:2.6rem;line-height:1;color:var(--accent)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(8,10,25,.45);z-index:40}
+.sheet{position:fixed;z-index:41;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--bg);border-left:1px solid var(--line);box-shadow:var(--shadow);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 18px) 22px calc(env(safe-area-inset-bottom,0px) + 28px);display:grid;gap:18px;align-content:start;animation:slide .22s ease}
+@keyframes slide{from{transform:translateX(30px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}.ladder div{transition:none}.tile:hover{transform:none}}
+.sheet .x{justify-self:end;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:4px 12px;font-weight:800;cursor:pointer}
+.sheet h2{display:flex;align-items:center;gap:12px;font-size:1.8rem}
+.sheet h2 .gem{width:.5em;height:.5em}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.sheet .blk{display:grid;gap:8px}
+.sheet .blk > h3{font-size:.76rem;font-family:var(--body);font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.how{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.how li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.recipe{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.recipe .arrow{color:var(--muted);font-weight:800}
+.recipe .where{flex-basis:100%;font-size:.8rem;color:var(--muted)}
+.note{border-left:3px solid var(--gold);padding:8px 12px;background:var(--surface);border-radius:0 10px 10px 0;font-size:.9rem}
+kbd{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;font-weight:700;border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;padding:1px 7px;background:var(--surface);white-space:nowrap}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.cal{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.cal div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:2px;text-align:center}
+.cal div b{font-family:var(--display);font-size:1.05rem;font-weight:400}
+.cal div.big{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.cal small{color:var(--muted);font-size:.78rem}
+.crown{color:var(--gold);font-weight:800}
+.gemtxt{color:#4fb2ff;font-weight:800}
+.soon{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--bad);border:1px solid currentColor;border-radius:999px;padding:0 7px}
+footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);font-size:.86rem}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <div class="brand">
+        <svg class="snapmark" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="9" width="14" height="14" rx="2.5" transform="rotate(45 16 16)" fill="var(--accent)"/><rect x="12.5" y="12.5" width="7" height="7" rx="1.2" transform="rotate(45 16 16)" fill="var(--gold)"/></svg>
+        <h1>Snap Codex</h1>
+        <span class="ver">GAV45</span>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6" stroke-linecap="round"/></svg>
+        <input id="q" type="search" placeholder="Search items, jobs, buildings… try “Gears” or “Bricks”" autocomplete="off" aria-label="Search the codex">
+        <div class="results" id="results" hidden></div>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Chapters"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<footer class="wrap">Every number here is read from the game's own config (Snap Into Existance, version GAV45). Tap any item, job or building to see how to get it and what it's for.</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-modal="true" role="dialog" aria-labelledby="sheetTitle"></aside>
+
+<script>
+/* ============================================================ data (from the game's config) */
+const RAR = ["Common","Uncommon","Rare","Epic","Legendary","Mythic","Secret","Unknown"];
+const WEIGHT = {Common:58,Uncommon:27,Rare:10,Epic:4,Legendary:1,Mythic:0.25,Secret:0.04,Unknown:0.008};
+
+// [name, rarity, category, note]
+const ITEMS = [
+ ["Wood","Common","Material"],["Pine Wood","Uncommon","Material"],["Mahogany","Rare","Material"],
+ ["Stone","Common","Material"],["Clay","Common","Material"],["Coal","Common","Material"],["Copper Ore","Uncommon","Material"],
+ ["Iron Ore","Uncommon","Material"],["Quartz","Uncommon","Material"],["Silver Ore","Rare","Material"],["Amethyst","Rare","Material"],
+ ["Glass","Rare","Material"],["Crystal Shard","Rare","Material"],["Gold","Epic","Material"],["Obsidian","Epic","Material"],
+ ["Fiber","Common","Material"],["Herbs","Uncommon","Material"],["Hide","Uncommon","Material"],
+ ["Wool","Common","Material"],["Feathers","Common","Material"],["Resin","Uncommon","Material"],["Salt","Common","Material"],
+ ["Lavender","Common","Material"],["Dye","Uncommon","Material"],["Marble","Rare","Material"],["Sulfur","Rare","Material"],
+ ["Garnet","Rare","Material"],["Pearl","Rare","Material"],
+ ["Berries","Common","Food"],["Apples","Common","Food"],["Mushrooms","Common","Food"],["Carrots","Uncommon","Food"],
+ ["Fish","Uncommon","Food"],["Wheat Seeds","Uncommon","Food"],["Meat","Uncommon","Food"],["Coconuts","Uncommon","Food"],
+ ["Glowcap","Uncommon","Food"],["Honey","Rare","Food"],
+ ["New Citizen","Mythic","Special","A new citizen appears at your colony, ready for a job. Power +3."],
+ ["Twin Citizens","Mythic","Special","Two new citizens appear at once. Power +6."],
+ ["Map Fragment","Rare","Special","The fog lifts from a random piece of your planet, and you find anything that was under it."],
+ ["Cradle Blessing","Epic","Special","Supplies for a growing town: 4 Wood, 2 Fiber and 4 Berries."],
+ ["Snap Crystal","Legendary","Special","Power +10% and +0.25 Luck on every Snap, for good."],
+ ["Planks","Common","Goods"],["Bricks","Common","Goods"],["Cloth","Common","Goods"],["Leather","Common","Goods"],
+ ["Copper Bar","Uncommon","Goods"],["Iron Bar","Uncommon","Goods"],["Tools","Uncommon","Goods"],["Weapons","Rare","Goods"],
+ ["Bread","Common","Goods","food"],["Stew","Uncommon","Goods","food"],["Fruit Pie","Uncommon","Goods","food"],["Medicine","Rare","Goods"],
+ ["Cut Stone","Uncommon","Goods"],["Garments","Rare","Goods"],["Pottery","Uncommon","Goods"],["Ale","Rare","Goods"],
+ ["Rations","Uncommon","Goods","food"],["Jewelry","Epic","Goods"],["Armor","Rare","Goods"],["Arrows","Uncommon","Goods"],
+ ["Manuscripts","Rare","Goods"],["Research","Epic","Goods"],["Trade Goods","Rare","Goods"],["Songbooks","Rare","Goods"],
+ ["Incense","Rare","Goods"],["Elixir","Epic","Goods"],["Gears","Epic","Goods"],["Charters","Epic","Goods"],
+ // (GAV44) the cosmic tiers: Legendary to Unknown materials, goods and specials
+ ["Starsteel Ore", "Legendary", "Material", "Star metal from fallen meteorites. Smiths forge it into Starsteel Bars."],["Moonwood", "Legendary", "Material", "Silver wood from trees that glow under the moon. Used for Enchanted Tools."],["Dragonglass", "Legendary", "Material", "Black glass with a fire inside. Glaziers turn it into Stained Glass."],["Frostheart", "Legendary", "Material", "A crystal with a cold heartbeat. Astronomers chart the stars with it."],["Ancient Amber", "Legendary", "Material", "Golden sap from the oldest trees. Sells for a fortune."],["Deep Coral", "Legendary", "Material", "Coral from the deep, brought up by Fishers."],["Phoenix Feather", "Legendary", "Material", "A warm feather from a phoenix nest. Tailors weave it into Tapestries."],["Golden Apple", "Legendary", "Food", "Eating one makes a citizen work faster for a while."],["Starfruit", "Legendary", "Food", "Glowing fruit. Fills a citizen with energy."],["Void Crystal", "Mythic", "Material", "A crystal that floats on nothing. Runestones and Aether Engines need it."],["Celestial Silk", "Mythic", "Material", "Silk spun by star moths. Starweavers and Tailors use it."],["Titan Bone", "Mythic", "Material", "Bones of a giant from before the Snap. Sells for a fortune."],["Living Wood", "Mythic", "Material", "Its tree heals itself instantly, so it never runs out. Lumberjacks turn it into Planks too."],["Ember Core", "Mythic", "Material", "The beating heart of a volcano. Powers Aether Engines."],["Leviathan Scale", "Mythic", "Material", "A shimmering scale washed up from the deep. Armorers love it."],["Ambrosia", "Mythic", "Food", "Food of the stars. Whoever eats it isn't hungry again for a whole day."],["Moon Milk", "Mythic", "Food", "Nectar of the moonflower. Whoever drinks it doesn't tire for a whole day."],["Stardust", "Secret", "Material", "What's left where a shooting star lands. Starweavers weave it into Starcloth."],["Ghostwood", "Secret", "Material", "A see-through tree that sings at night."],["Eclipse Stone", "Secret", "Material", "A black stone ringed with light, like the sun in an eclipse."],["Rainbow Quartz", "Secret", "Material", "Every color at once. Sells for a fortune."],["Kraken Ink", "Secret", "Material", "Ink from something huge under the waves. Scribes and Tailors use it."],["Null Matter", "Unknown", "Material", "It isn't really there. Only found around a Void Rift."],["Echo Shard", "Unknown", "Material", "Crystals that ring with sounds from another time. Snapsmiths use them."],["Glitch Ore", "Unknown", "Material", "Never the same twice: every load turns into a different thing you know."],["Starsteel Bar", "Legendary", "Goods"],["Enchanted Tools", "Legendary", "Goods", "Like Tools, but every trip brings back +2 and they last much longer"],["Royal Honey", "Legendary", "Goods", "Fills hunger and energy"],["Royal Feast", "Legendary", "Goods", "The Tavern's best meal: pays 6 Coins and makes the eater work faster"],["Stained Glass", "Legendary", "Goods"],["Clockwork Parts", "Legendary", "Goods"],["Tapestry", "Legendary", "Goods"],["Star Charts", "Legendary", "Goods", "Explorers use one per trip to explore 50% faster"],["Blueprints", "Legendary", "Goods", "With Blueprints in stock, construction is 25% faster (one is used per finished building)"],["Philosopher's Stone", "Mythic", "Goods", "Turns piles of full common resources into rare ones (5 uses each)"],["Crown Jewels", "Mythic", "Goods", "Each one in stock adds +10% to taxes (up to 5)"],["Runestones", "Mythic", "Goods", "Each one in stock makes the army 3% stronger (up to 10)"],["Aether Engine", "Mythic", "Goods", "Each one in stock makes everyone work 2% faster (up to 10)"],["Banquet Platter", "Mythic", "Goods", "A royal meal: pays 8 Coins at the Tavern and fills the eater with energy"],["Lucky Sigil", "Unknown", "Goods", "Each one turns a normal Snap into a Golden Snap (Rare or better)"],["Starcloth", "Unknown", "Goods"],["Golden Snap", "Legendary", "Special", "Your next 5 Snaps are all Rare or better."],["Master Plan", "Legendary", "Special", "The building with the most work left is finished right away."],["Festival Charter", "Legendary", "Special", "Starts a Harvest Festival: every food trip brings back 2 extra."],["Fertile Rain", "Legendary", "Special", "A warm rain falls: all food trips bring back double for a whole day."],["Treasure Map", "Legendary", "Special", "Marks a buried chest somewhere on your land. Click it to dig it up!"],["Genius Citizen", "Mythic", "Special", "A brilliant new citizen with 10 Strength, 10 Smarts and 10 Speed."],["Starfall", "Mythic", "Special", "A meteor crashes near town: 30 Starsteel Ore, and the crater stays to be mined."],["Snap Storm", "Mythic", "Special", "10 free Snaps, all at once."],["Time Warp", "Mythic", "Special", "Every construction and upgrade finishes right now."],["Fountain of Youth", "Mythic", "Special", "Everyone is fed and rested and works 50% faster for 10 minutes."],["Snap Egg", "Secret", "Special", "An egg from the stars appears by the Town Hall. It hatches into a pet that follows the Elder (+5% luck). One per world."],["Ghost Lantern", "Secret", "Special", "A friendly ghost moves in. Every night it gathers resources while everyone sleeps. One per world."],["Crown of the First King", "Secret", "Special", "A statue of the first king rises by the Town Hall: Power +10 and taxes +15%. One per world."],["Rubber Duck", "Secret", "Special", "A rubber duck floats in the water near town. Each one: everyone works 1% faster (up to 5)."],["Message in a Bottle", "Secret", "Special", "A bottle washes ashore with a map to a hidden treasure. Click the chest to open it!"],["The Blank Card", "Unknown", "Special", "Choose anything up to Secret, and it's yours."],["Fragment of the Snap", "Unknown", "Special", "One of 7. Collect them all to make the Snap whole: double luck, forever."],["Pocket Universe", "Unknown", "Special", "A tiny floating world appears above your town: Power +10 and +10% from every trip. One per world."],["Void Rift", "Unknown", "Special", "A rift to the Void tears open near town. Null Matter can be mined around it. One per world."],["Second Sun", "Unknown", "Special", "A second sun rises in your sky. Days last 25% longer, forever. One per world."],["Clone Mirror", "Unknown", "Special", "Your best citizen steps out of a mirror. Now there are two of them."],["The Stranger", "Unknown", "Special", "A mysterious stranger joins your town. Every day they do a different job, twice as well. One per world."],
+
+];
+// where the newer materials turn up
+const PLACE = {Wool:"animals",Feathers:"animals",Resin:"trees",Salt:"the shore",Lavender:"almost anywhere",Dye:"almost anywhere",
+  Marble:"rocky ground",Sulfur:"volcanic ground",Garnet:"crystal areas",Pearl:"the shore",
+  "Starsteel Ore": "meteorites in Grassland, Desert, Mountains, Tundra, Mountain Valley, Snowfield", "Moonwood": "moonwood trees in Forest, Pine Forest, Mountain Valley, Snowfield", "Dragonglass": "dragonglass spires in Volcanic, Chasm, Mountains", "Frostheart": "frostheart crystals in Snowfield, Tundra, Snowy Peaks", "Ancient Amber": "amber trees in Forest, Jungle, Mountain Valley", "Deep Coral": "coral reefs in Beach", "Phoenix Feather": "phoenix nests in Mountains, Volcanic, Desert", "Golden Apple": "golden apple trees in Grassland, Forest, Mountain Valley", "Starfruit": "starfruit bushes in Jungle, Beach, Mushroom Grove", "Void Crystal": "floating void crystals in Crystal Forest, Chasm, Mushroom Grove", "Celestial Silk": "silk trees in Forest, Mushroom Grove, Crystal Forest", "Titan Bone": "titan remains in Desert, Grassland, Tundra", "Living Wood": "living trees in Jungle, Forest", "Ember Core": "ember vents in Volcanic, Chasm", "Leviathan Scale": "leviathan sheds on the beach in Beach", "Ambrosia": "ambrosia blooms in Mountain Valley, Grassland, Crystal Forest", "Moon Milk": "moonflowers in Mushroom Grove, Snowfield, Tundra", "Stardust": "stardust where shooting stars land in Grassland, Desert, Tundra, Mountain Valley, Beach, Forest", "Ghostwood": "ghost trees in Pine Forest, Mushroom Grove, Tundra", "Eclipse Stone": "eclipse monoliths in Mountains, Snowy Peaks, Chasm", "Rainbow Quartz": "rainbow geodes in Crystal Forest, Mountain Valley, Mountains", "Kraken Ink": "ink pools in Beach", "Null Matter": "null shards around a Void Rift", "Echo Shard": "echo shards in Chasm, Crystal Forest, Snowy Peaks", "Glitch Ore": "glitch blocks in Grassland, Forest, Desert, Mountains, Tundra, Jungle, Chasm, Volcanic"};
+
+// [job, rarity, what they do, station building id]
+const JOBS = [
+ ["Gatherer","Uncommon","Forages plants, fruit and berries. Also picks up Wood, Fiber, Herbs, Honey, fish and shoreline finds."],
+ ["Lumberjack","Uncommon","Chops every kind of wood, and brings back 1 more each trip."],
+ ["Miner","Uncommon","Digs stone, ores and minerals."],
+ ["Farmer","Uncommon","Grows wheat, carrots and berries on Farm Plots."],
+ ["Fisher","Uncommon","Fishes at the shore and brings back 1 more each trip."],
+ ["Hunter","Uncommon","Tracks animals for meat and hides, and brings back 1 more each trip."],
+ ["Explorer","Uncommon","Clears the fog. Tap a foggy area and an Explorer walks out to uncover it."],
+ ["Builder","Uncommon","Builds and upgrades buildings. Each Builder works on one site until it's finished."],
+ ["Cook","Rare","Cooks bread, stew and pie.","bakery"],
+ ["Crafter","Rare","Makes planks, bricks, glass, cloth and leather.","workshop"],
+ ["Smith","Rare","Smelts metal bars and forges tools and weapons.","forge"],
+ ["Healer","Epic","Brews medicine. With medicine in stock, everyone works 20% faster.","infirmary"],
+ ["Mason","Uncommon","Cuts stone and marble into Cut Stone.","masonsyard"],
+ ["Tailor","Rare","Sews Garments.","tailorshop"],
+ ["Potter","Uncommon","Throws Pottery from clay.","potteryhouse"],
+ ["Brewer","Rare","Brews Ale.","brewery"],
+ ["Butcher","Uncommon","Packs Rations.","butchershop"],
+ ["Jeweler","Epic","Sets Jewelry.","jewelershop"],
+ ["Armorer","Rare","Forges Armor.","armory"],
+ ["Fletcher","Uncommon","Makes Arrows.","fletchery"],
+ ["Scribe","Rare","Writes Manuscripts.","scriptorium"],
+ ["Scholar","Epic","Turns Manuscripts into Research.","academy"],
+ ["Merchant","Rare","Packs Trade Goods.","tradinghouse"],
+ ["Bard","Rare","Writes Songbooks.","musichall"],
+ ["Priest","Rare","Burns Incense.","chapel"],
+ ["Alchemist","Epic","Brews Elixir, and turns Elixir into Medicine.","alchemylab"],
+ ["Engineer","Epic","Builds Gears, and turns Gears into Tools.","engineeringhall"],
+ ["Steward","Epic","Drafts Charters.","stewardshall"],
+ // (GAV44) limited jobs: Legendary 5 citizens, Mythic 3, Secret 2, Unknown 1
+ ["Astronomer", "Legendary", "Charts the stars at the Observatory. Each one adds +3% Snap luck.", "observatory"],
+ ["Apiarist", "Legendary", "Keeps the royal bees and makes Royal Honey.", "royalapiary"],
+ ["Glazier", "Legendary", "Makes Stained Glass at the Glazier Studio.", "glazierstudio"],
+ ["Architect", "Legendary", "Draws Blueprints. Each one makes construction 8% faster.", "draftinghall"],
+ ["Innkeeper", "Legendary", "Runs the Tavern: cooks Royal Feasts and earns +25% on every meal and drink.", "tavern"],
+ ["Teacher", "Legendary", "Teaches at the School: kids learn twice as fast and grow up wiser.", "school"],
+ ["Paladin", "Legendary", "A holy knight who guards the town. Worth four Soldiers in the War Room.", "barracks"],
+ ["Archmage", "Mythic", "Makes Philosopher's Stones at the Mage Tower. Tools wear out half as fast.", "magetower"],
+ ["Dragon Tamer", "Mythic", "Raises a dragon at the Dragon Roost: +25 Defense, and Miners and Hunters bring back +1.", "dragonroost"],
+ ["Oracle", "Mythic", "Reads the stars at the Temple of Stars: shows the rarity of your next Snap, and +5% luck.", "starstemple"],
+ ["Sky Captain", "Mythic", "Flies the airship from the Airship Dock: Explorers explore 30% faster.", "airshipdock"],
+ ["Runesmith", "Mythic", "Carves Runestones at the Rune Forge. Each Runestone makes the army 3% stronger.", "runeforge"],
+ ["Royal Chef", "Mythic", "Cooks Banquet Platters in the Kitchen, the best meal in town.", "kitchen"],
+ ["Hermit", "Secret", "Lives out in the wild and comes back with rare finds from secret caves."],
+ ["Wanderer", "Secret", "Roams the planet, lifting the fog from new land and bringing back souvenirs."],
+ ["Timekeeper", "Secret", "Winds the Clock Tower: every day lasts 20% longer.", "clocktower"],
+ ["Ghost Keeper", "Secret", "Works all night gathering while everyone sleeps, and naps by day."],
+ ["Worldshaper", "Unknown", "Heals the land: used-up trees, rocks and plants grow back right away."],
+ ["Snapsmith", "Unknown", "Forges Lucky Sigils at the Snap Forge. Each one turns a Snap into a Golden Snap.", "snapforge"],
+ ["Starweaver", "Unknown", "Weaves Starcloth at the Star Loom. Meteor Showers come three times as often.", "starloom"],
+
+];
+const SPECIAL_JOBS = [
+ ["Recruit","Trains at the Barracks. Given by hand, a Recruit becomes Militia after 2 minutes (needs Weapons). Citizens training in the Barracks window are Recruits until they graduate. Unlocked by building a Barracks."],
+ ["Soldier","Guards the colony day and night. Each Soldier has a rank: Militia, Footman, Man-at-Arms or Knight, or Archer, Marksman or Ranger. See the Army chapter."],
+ ["Elder","Your first survivor. Wise and respected; can't be given a job."],
+ ["Child","Grows into an adult. A School makes kids grow up 50% faster."],
+ ["Baby","Born to a couple with a free bed and food. Grows into a child."],
+ ["Unassigned","A free citizen with no job yet. Open People and pick a job you've unlocked."],
+];
+const GATHERS = {
+ Gatherer:["Wood","Fiber","Berries","Apples","Mushrooms","Herbs","Coconuts","Honey","Glowcap","Fish","Salt","Lavender","Dye","Pearl","Golden Apple","Starfruit","Celestial Silk","Ambrosia","Moon Milk","Stardust"],
+ Lumberjack:["Wood","Pine Wood","Mahogany","Resin","Moonwood","Ancient Amber","Living Wood","Ghostwood"],
+ Miner:["Stone","Clay","Coal","Copper Ore","Iron Ore","Quartz","Silver Ore","Gold","Amethyst","Glass","Crystal Shard","Obsidian","Marble","Sulfur","Garnet","Starsteel Ore","Dragonglass","Frostheart","Void Crystal","Titan Bone","Ember Core","Eclipse Stone","Rainbow Quartz","Null Matter","Echo Shard","Glitch Ore"],
+ Farmer:["Wheat Seeds","Carrots","Berries"],
+ Fisher:["Fish","Deep Coral","Leviathan Scale","Kraken Ink"],
+ Hunter:["Meat","Hide","Wool","Feathers","Phoenix Feather"],
+};
+// {out, n, inp, job, at[]}
+const R = (out,n,inp,job,at)=>({out,n,inp,job,at});
+const RECIPES = [
+ R("Planks",3,{Wood:2},"Crafter",["lumbermill","workshop"]),
+ R("Planks",4,{"Pine Wood":2},"Crafter",["lumbermill","workshop"]),
+ R("Planks",6,{Mahogany:2},"Crafter",["lumbermill","workshop"]),
+ R("Cloth",1,{Fiber:3},"Crafter",["workshop"]),
+ R("Leather",1,{Hide:2},"Crafter",["workshop","huntinglodge"]),
+ R("Bricks",3,{Clay:2,Coal:1},"Crafter",["kiln"]),
+ R("Glass",2,{Quartz:2,Coal:1},"Crafter",["kiln"]),
+ R("Copper Bar",1,{"Copper Ore":2,Coal:1},"Smith",["forge"]),
+ R("Iron Bar",1,{"Iron Ore":2,Coal:1},"Smith",["forge"]),
+ R("Tools",1,{"Iron Bar":1,Planks:1},"Smith",["forge"]),
+ R("Tools",1,{"Copper Bar":2,Planks:1},"Smith",["forge"]),
+ R("Weapons",1,{"Iron Bar":2,Leather:1},"Smith",["forge"]),
+ R("Bread",3,{"Wheat Seeds":3},"Cook",["bakery","kitchen"]),
+ R("Stew",3,{Meat:1,Carrots:1},"Cook",["kitchen","tavern"]),
+ R("Stew",2,{Fish:1,Mushrooms:1},"Cook",["kitchen","tavern"]),
+ R("Fruit Pie",3,{Apples:2,"Wheat Seeds":1},"Cook",["bakery","kitchen"]),
+ R("Medicine",1,{Herbs:2},"Healer",["infirmary"]),
+ R("Medicine",2,{Herbs:1,Honey:1},"Healer",["infirmary"]),
+ R("Cut Stone",2,{Stone:3},"Mason",["masonsyard"]),
+ R("Cut Stone",4,{Marble:2},"Mason",["masonsyard"]),
+ R("Garments",2,{Cloth:1,Dye:1,Wool:1},"Tailor",["tailorshop"]),
+ R("Pottery",2,{Clay:2},"Potter",["potteryhouse"]),
+ R("Ale",2,{Honey:1,"Wheat Seeds":2},"Brewer",["brewery"]),
+ R("Rations",2,{Meat:2,Salt:1},"Butcher",["butchershop"]),
+ R("Jewelry",2,{Garnet:1,Gold:1},"Jeweler",["jewelershop"]),
+ R("Jewelry",3,{Gold:1,Amethyst:1},"Jeweler",["jewelershop"]),
+ R("Jewelry",2,{Gold:1,Pearl:1},"Jeweler",["jewelershop"]),
+ R("Armor",2,{Leather:1,"Iron Bar":2},"Armorer",["armory"]),
+ R("Arrows",2,{Wood:1,Feathers:2},"Fletcher",["fletchery"]),
+ R("Manuscripts",2,{Fiber:2,Dye:1},"Scribe",["scriptorium"]),
+ R("Research",2,{Manuscripts:2},"Scholar",["academy"]),
+ R("Trade Goods",2,{Pottery:2},"Merchant",["tradinghouse"]),
+ R("Trade Goods",2,{Jewelry:1,Garments:1},"Merchant",["tradinghouse"]),
+ R("Songbooks",2,{Manuscripts:1},"Bard",["musichall"]),
+ R("Incense",2,{Resin:1,Lavender:1},"Priest",["chapel"]),
+ R("Elixir",2,{Sulfur:1,Herbs:2},"Alchemist",["alchemylab"]),
+ R("Medicine",3,{Elixir:1},"Alchemist",["alchemylab"]),
+ R("Gears",2,{"Copper Bar":1,"Iron Bar":1},"Engineer",["engineeringhall"]),
+ R("Tools",2,{Gears:1,Planks:1},"Engineer",["engineeringhall"]),
+ R("Charters",2,{Manuscripts:1,"Trade Goods":1},"Steward",["stewardshall"]),
+ R("Charters",3,{Research:1,Songbooks:1},"Steward",["stewardshall"]),
+ // (GAV44) cosmic recipes
+ R("Starsteel Bar",1,{"Coal": 2, "Starsteel Ore": 2},"Smith",["forge"]),
+ R("Enchanted Tools",1,{"Moonwood": 1, "Starsteel Bar": 1},"Smith",["forge"]),
+ R("Royal Honey",2,{"Lavender": 1, "Honey": 2},"Apiarist",["royalapiary"]),
+ R("Royal Feast",2,{"Stew": 1, "Fruit Pie": 1, "Golden Apple": 1},"Innkeeper",["tavern"]),
+ R("Royal Feast",1,{"Ale": 1, "Stew": 2, "Bread": 2},"Innkeeper",["tavern"]),
+ R("Stained Glass",2,{"Dye": 1, "Glass": 2},"Glazier",["glazierstudio"]),
+ R("Stained Glass",4,{"Dragonglass": 1, "Glass": 2},"Glazier",["glazierstudio"]),
+ R("Clockwork Parts",1,{"Starsteel Bar": 1, "Gears": 2},"Engineer",["engineeringhall"]),
+ R("Clockwork Parts",1,{"Copper Bar": 2, "Gears": 3},"Engineer",["engineeringhall"]),
+ R("Tapestry",1,{"Phoenix Feather": 1, "Garments": 1, "Dye": 2},"Tailor",["tailorshop"]),
+ R("Tapestry",2,{"Garments": 2, "Celestial Silk": 1},"Tailor",["tailorshop"]),
+ R("Star Charts",2,{"Manuscripts": 1, "Crystal Shard": 1},"Astronomer",["observatory"]),
+ R("Star Charts",3,{"Manuscripts": 1, "Frostheart": 1},"Astronomer",["observatory"]),
+ R("Blueprints",2,{"Manuscripts": 1, "Planks": 2},"Architect",["draftinghall"]),
+ R("Philosopher's Stone",1,{"Void Crystal": 1, "Elixir": 2, "Gold": 2},"Archmage",["magetower"]),
+ R("Philosopher's Stone",1,{"Elixir": 3, "Gold": 2, "Amethyst": 3},"Archmage",["magetower"]),
+ R("Crown Jewels",1,{"Pearl": 1, "Jewelry": 3, "Gold": 2},"Jeweler",["jewelershop"]),
+ R("Runestones",2,{"Crystal Shard": 1, "Obsidian": 1},"Runesmith",["runeforge"]),
+ R("Runestones",4,{"Void Crystal": 1, "Obsidian": 1},"Runesmith",["runeforge"]),
+ R("Aether Engine",1,{"Clockwork Parts": 2, "Void Crystal": 1, "Ember Core": 1},"Engineer",["engineeringhall"]),
+ R("Aether Engine",1,{"Clockwork Parts": 3, "Crystal Shard": 4, "Gold": 3},"Engineer",["engineeringhall"]),
+ R("Banquet Platter",3,{"Starfruit": 1, "Royal Honey": 1, "Royal Feast": 1},"Royal Chef",["kitchen"]),
+ R("Banquet Platter",2,{"Stew": 2, "Fruit Pie": 2, "Honey": 1},"Royal Chef",["kitchen"]),
+ R("Lucky Sigil",1,{"Crystal Shard": 3, "Gold": 1},"Snapsmith",["snapforge"]),
+ R("Lucky Sigil",2,{"Echo Shard": 1, "Gold": 1},"Snapsmith",["snapforge"]),
+ R("Starcloth",1,{"Cloth": 2, "Celestial Silk": 2},"Starweaver",["starloom"]),
+ R("Starcloth",2,{"Cloth": 4, "Stardust": 1},"Starweaver",["starloom"]),
+ R("Planks",8,{"Living Wood": 2},"Crafter",["lumbermill", "workshop"]),
+ R("Armor",3,{"Leviathan Scale": 1, "Iron Bar": 1},"Armorer",["armory"]),
+ R("Manuscripts",4,{"Fiber": 2, "Kraken Ink": 1},"Scribe",["scriptorium"]),
+
+];
+const SELL = {Planks:.3,Bricks:.4,Cloth:.5,Leather:.5,"Copper Bar":1,"Iron Bar":1.25,Tools:2.5,Weapons:3.5,Bread:.3,Stew:.5,"Fruit Pie":.5,Medicine:2,Glass:.75,
+ "Cut Stone":.75,Garments:2.5,Pottery:1.25,Ale:1.5,Rations:.75,Jewelry:6,Armor:4,Arrows:.4,Manuscripts:1.5,Research:4.5,"Trade Goods":7,Songbooks:2.5,Incense:2,Elixir:4,Gears:2.5,Charters:9};
+const RAW = {Common:.08,Uncommon:.2,Rare:.6,Epic:1.5,Legendary:3,Mythic:5,Secret:8,Unknown:15};
+
+// buildings: [id, name, cat, sub, cost, desc, extra]
+const B = (id,name,cat,sub,cost,desc,x={})=>Object.assign({id,name,cat,sub,cost,desc},x);
+const BUILD = [
+ B("hut","Hut","Buildings","Housing",{Wood:20},"A simple log home. Put beds inside. Power +1",{foot:2,work:24,home:1,interior:1}),
+ B("cabin","Log Cabin","Buildings","Housing",{Wood:34,Stone:6},"A sturdy log cabin with a chimney. Power +2",{foot:2,work:30,home:2,interior:1}),
+ B("cottage","Cottage","Buildings","Housing",{Wood:30,Stone:10},"A cozy home with windows. Power +2",{foot:2,work:34,home:2,interior:1}),
+ B("reedhome","Reed Roof House","Buildings","Housing",{Wood:28,Stone:8},"An asymmetric thatched roof and timber shutters. Unfurnished. Power +2",{foot:3,work:32,home:2,interior:1}),
+ B("bighouse","Big House","Buildings","Housing",{Wood:50,Stone:25},"Room for a whole family. Power +3",{foot:3,work:50,home:3,interior:1}),
+ B("alpinehome","Alpine Chalet","Buildings","Housing",{Wood:44,Stone:12},"A steep slate roof, braces and covered porch. Unfurnished. Power +3",{foot:4,work:50,home:3,interior:1}),
+ B("pavilionhome","Pavilion House","Buildings","Housing",{Wood:42,Stone:22},"A square house beneath a pointed jade roof. Unfurnished. Power +3",{foot:4,work:53,home:3,interior:1}),
+ B("coastalhome","Coastal House","Buildings","Housing",{Wood:38,Stone:18},"Blue cladding, pale trim and a sloping metal roof. Unfurnished. Power +3",{foot:4,work:47,home:3,interior:1}),
+ B("brickhouse","Brick House","Buildings","Housing",{Planks:20,Bricks:30,Glass:6},"Warm red bricks and a big chimney. Power +4",{foot:3,work:60,home:4,interior:1}),
+ B("twinhome","Twin Gable House","Buildings","Housing",{Wood:54,Stone:20},"Two red gables shelter one spacious open room. Unfurnished. Power +4",{foot:4,work:64,home:4,interior:1}),
+ B("clerestoryhome","Clerestory House","Buildings","Housing",{Wood:50,Stone:26},"A raised glazed roof brings light into an open interior. Unfurnished. Power +4",{foot:4,work:63,home:4,interior:1}),
+ B("slatehome","Slate Stone House","Buildings","Housing",{Wood:28,Stone:48},"A stone shell with pale quoins and a dark hipped roof. Unfurnished. Power +4",{foot:4,work:52,home:4,interior:1}),
+ B("curvedhome","Faceted Roof House","Buildings","Housing",{Wood:48,Stone:24},"A violet roof made from broad low-poly facets. Unfurnished. Power +4",{foot:4,work:60,home:4,interior:1}),
+ B("terracehome","Terrace House","Buildings","Housing",{Wood:30,Stone:44},"A warm masonry home with a flat parapet roof. Unfurnished. Power +4",{foot:4,work:52,home:4,interior:1}),
+ B("verandahome","Veranda House","Buildings","Housing",{Wood:56,Stone:26},"A broad covered veranda beneath an olive hipped roof. Unfurnished. Power +4",{foot:4,work:69,home:4,interior:1}),
+ B("apartment","Apartment","Buildings","Housing",{Wood:30,Stone:60,Glass:6},"A tall stone building. Power +5",{foot:3,work:70,home:5,interior:1}),
+ B("longhome","Timber Longhouse","Buildings","Housing",{Wood:66,Stone:20},"A long timber hall with a ridge running across the front. Unfurnished. Power +5",{foot:4,work:76,home:5,interior:1}),
+ B("timberhome","Half Timber House","Buildings","Housing",{Wood:64,Stone:28},"An exposed timber frame and green gambrel roof. Unfurnished. Power +5",{foot:4,work:78,home:5,interior:1}),
+ B("manor","Manor","Buildings","Housing",{Wood:80,Stone:60,Glass:10},"A grand two-story home. Power +6",{foot:4,work:95,home:6,interior:1}),
+ B("shed","Storage Shed","Buildings","Production",{Wood:16},"Every resource can be stored +50 more. Power +1",{foot:2,work:18,storage:50,interior:1}),
+ B("storehouse","Storehouse","Buildings","Production",{Wood:40,Stone:20},"Every resource can be stored +150 more. Power +1",{foot:3,work:40,storage:150,interior:1}),
+ B("granary","Granary","Buildings","Production",{Wood:30,Fiber:10,Stone:10},"Food can be stored +200 more and keeps fresh. Power +1",{foot:2,work:34,foodStorage:200,interior:1}),
+ B("farmplot","Farm Plot","Buildings","Production",{Wood:6,Fiber:6},"More fields for your Farmers",{foot:2,work:12}),
+ B("well","Well","Buildings","Production",{Stone:12},"Fresh water. Power +2",{foot:1,work:16}),
+ B("huntinglodge","Hunting Lodge","Buildings","Production",{Wood:30,Stone:6},"Hunters bring back +1 Meat and Hide. Crafters tan leather here",{foot:2,work:30,station:"Crafter",interior:1}),
+ B("lumbermill","Lumber Mill","Buildings","Production",{Wood:40,Stone:12},"+2 Wood every trip. Crafters saw planks here",{foot:3,work:40,station:"Crafter",interior:1}),
+ B("quarry","Quarry","Buildings","Production",{Wood:30,Stone:10},"Miners bring back +1 Stone, Clay and Iron Ore",{foot:3,work:36}),
+ B("fishhut","Fishing Hut","Buildings","Production",{Wood:26},"Gatherers bring back +2 Fish",{foot:2,work:26,interior:1}),
+ B("bakery","Bakery","Buildings","Crafting",{Wood:30,Stone:20},"+1 to every food brought back. Cooks bake bread and pie here",{foot:2,work:40,station:"Cook",interior:1}),
+ B("workshop","Workshop","Buildings","Crafting",{Wood:30,Stone:16,"Iron Ore":4},"Every trip brings back +1. Crafters make planks, cloth and leather",{foot:3,work:40,station:"Crafter",interior:1}),
+ B("kitchen","Kitchen","Buildings","Crafting",{Wood:30,Stone:20,Clay:10},"Cooks make stew, bread and fruit pie here. Power +1",{foot:2,work:36,station:"Cook",interior:1}),
+ B("forge","Forge","Buildings","Crafting",{Stone:40,Wood:20,Clay:10},"Smiths smelt copper and iron bars and forge tools and weapons. Power +1",{foot:2,work:44,station:"Smith",interior:1}),
+ B("kiln","Kiln","Buildings","Crafting",{Stone:20,Clay:16},"Crafters fire bricks and melt quartz into glass. Power +1",{foot:2,work:30,station:"Crafter"}),
+ B("masonsyard","Mason Yard","Buildings","Crafting",{Wood:30,Stone:18},"Mason workplace. Makes Cut Stone.",{foot:3,work:54,station:"Mason",interior:1}),
+ B("tailorshop","Tailor Shop","Buildings","Crafting",{Wood:30,Stone:18},"Tailor workplace. Makes Garments.",{foot:3,work:54,station:"Tailor",interior:1}),
+ B("potteryhouse","Pottery House","Buildings","Crafting",{Wood:30,Stone:18},"Potter workplace. Makes Pottery.",{foot:3,work:54,station:"Potter",interior:1}),
+ B("brewery","Brewery","Buildings","Crafting",{Wood:30,Stone:18},"Brewer workplace. Makes Ale.",{foot:3,work:54,station:"Brewer",interior:1}),
+ B("butchershop","Butcher Shop","Buildings","Crafting",{Wood:30,Stone:18},"Butcher workplace. Makes Rations.",{foot:3,work:54,station:"Butcher",interior:1}),
+ B("jewelershop","Jeweler Shop","Buildings","Crafting",{Wood:30,Stone:18},"Jeweler workplace. Makes Jewelry.",{foot:3,work:54,station:"Jeweler",interior:1}),
+ B("armory","Armory","Buildings","Crafting",{Wood:30,Stone:18},"Armorer workplace. Makes Armor.",{foot:3,work:54,station:"Armorer",interior:1}),
+ B("fletchery","Fletchery","Buildings","Crafting",{Wood:30,Stone:18},"Fletcher workplace. Makes Arrows.",{foot:3,work:54,station:"Fletcher",interior:1}),
+ B("scriptorium","Scriptorium","Buildings","Crafting",{Wood:30,Stone:18},"Scribe workplace. Makes Manuscripts.",{foot:3,work:54,station:"Scribe",interior:1}),
+ B("academy","Academy","Buildings","Crafting",{Wood:30,Stone:18},"Scholar workplace. Makes Research.",{foot:3,work:54,station:"Scholar",interior:1}),
+ B("tradinghouse","Trading House","Buildings","Crafting",{Wood:30,Stone:18},"Merchant workplace. Makes Trade Goods.",{foot:3,work:54,station:"Merchant",interior:1}),
+ B("musichall","Music Hall","Buildings","Crafting",{Wood:30,Stone:18},"Bard workplace. Makes Songbooks.",{foot:3,work:54,station:"Bard",interior:1}),
+ B("chapel","Chapel","Buildings","Crafting",{Wood:30,Stone:18},"Priest workplace. Makes Incense.",{foot:3,work:54,station:"Priest",interior:1}),
+ B("alchemylab","Alchemy Laboratory","Buildings","Crafting",{Wood:30,Stone:18},"Alchemist workplace. Makes Elixir and Medicine.",{foot:3,work:54,station:"Alchemist",interior:1}),
+ B("engineeringhall","Engineering Hall","Buildings","Crafting",{Wood:30,Stone:18},"Engineer workplace. Makes Gears and Tools.",{foot:3,work:54,station:"Engineer",interior:1}),
+ B("stewardshall","Steward Hall","Buildings","Crafting",{Wood:30,Stone:18},"Steward workplace. Makes Charters.",{foot:3,work:54,station:"Steward",interior:1}),
+ B("nursery","Nursery","Buildings","Community",{Wood:36,Stone:10},"Its cribs count as beds, so every crib is room for one more little one. +2 population",{foot:3,work:36,interior:1}),
+ B("school","School","Buildings","Community",{Wood:40,Stone:24},"Kids grow up 50% faster",{foot:3,work:46,interior:1}),
+ B("tavern","Tavern","Buildings","Community",{Wood:44,Stone:16},"A place to gather and share stories. Power +4. Cooks make stew here",{foot:3,work:44,station:"Cook",interior:1}),
+ B("market","Market Stall","Buildings","Community",{Wood:18,Fiber:4},"Trading brings life to the colony. Power +2. Each one sells goods for +10% (up to +50%)",{foot:1,work:18}),
+ B("infirmary","Infirmary","Buildings","Community",{Stone:20,Planks:20,Herbs:6},"Healers brew medicine. With medicine in stock, everyone works 20% faster. Power +1",{foot:3,work:44,station:"Healer",interior:1}),
+ B("fountain","Plaza Fountain","Buildings","Community",{Stone:30},"The heart of your town square. Power +3",{foot:2,work:30}),
+ B("watchtower","Watchtower","Buildings","Defense",{Wood:25,Stone:8},"Clears the fog all around it",{foot:1,work:26}),
+ B("barracks","Barracks","Buildings","Defense",{Stone:30,Planks:30,"Iron Bar":4},"Click it to train Soldiers and Archers for Coins (2, 4 or 8 hours). Also unlocks the Recruit job (quick Militia, needs Weapons)",{foot:3,work:60,interior:1}),
+ B("palisade","Palisade","Buildings","Defense",{Wood:4},"A sharpened log wall. R to turn it",{foot:1,work:4,noUp:1}),
+ B("castlewall","Castle Wall","Buildings","Defense",{Stone:8},"A crenellated stone wall. Rotate in 45 degree steps.",{foot:1,work:10,noUp:1}),
+ B("castlegate","Castle Gate","Buildings","Defense",{Stone:30,Planks:6},"An open stone gateway for citizens to pass through.",{foot:3,work:25}),
+ B("lighthouse","Lighthouse","Buildings","Special",{Stone:40,Glass:4},"Clears the fog far around it",{foot:2,work:50,interior:1}),
+ B("shrine","Snap Shrine","Buildings","Special",{Stone:20,Glass:4,Gold:2},"Luck +0.2 on every Snap",{foot:2,work:40}),
+ B("obelisk","Snap Obelisk","Buildings","Special",{Stone:30,"Crystal Shard":4},"Hums with old power. Power +6",{foot:1,work:44}),
+ B("townhall","Town Hall","Buildings","Special",{Wood:60,Stone:40,Planks:20},"Replaces the survivor's camp: tap the camp and press Upgrade. Collects Coins from your citizens, opens the War Room, adds storage and room for more citizens. Power +3",{foot:3,work:70,hall:1}),
+ // (GAV44) Wonders
+ B("observatory","Observatory","Buildings","Wonders",{"Stone": 60, "Glass": 16, "Crystal Shard": 6, "Iron Bar": 6},"A domed tower with a great telescope. Astronomers make Star Charts here. A Legendary Wonder: you need the Astronomer job to place it",{"foot": 3, "work": 80, "interior": 1, "station": "Astronomer", "rarity": "Legendary", "needsJob": "Astronomer"}),
+ B("royalapiary","Royal Apiary","Buildings","Wonders",{"Wood": 50, "Planks": 24, "Lavender": 10, "Honey": 10},"A garden hall full of royal bees. Apiarists make Royal Honey here. A Legendary Wonder: you need the Apiarist job to place it",{"foot": 3, "work": 70, "interior": 1, "station": "Apiarist", "rarity": "Legendary", "needsJob": "Apiarist"}),
+ B("glazierstudio","Glazier Studio","Buildings","Wonders",{"Stone": 40, "Glass": 20, "Coal": 20, "Planks": 16},"A bright studio with a glass furnace. Glaziers make Stained Glass here. A Legendary Wonder: you need the Glazier job to place it",{"foot": 3, "work": 70, "interior": 1, "station": "Glazier", "rarity": "Legendary", "needsJob": "Glazier"}),
+ B("draftinghall","Drafting Hall","Buildings","Wonders",{"Stone": 40, "Planks": 40, "Manuscripts": 6, "Glass": 10},"Where Architects draw Blueprints for faster building. A Legendary Wonder: you need the Architect job to place it",{"foot": 3, "work": 76, "interior": 1, "station": "Architect", "rarity": "Legendary", "needsJob": "Architect"}),
+ B("magetower","Mage Tower","Buildings","Wonders",{"Stone": 80, "Gold": 6, "Cut Stone": 30, "Amethyst": 10},"A spire of floating runes. Archmages make Philosopher's Stones here. A Mythic Wonder: you need the Archmage job to place it",{"foot": 3, "work": 110, "interior": 1, "station": "Archmage", "rarity": "Mythic", "needsJob": "Archmage"}),
+ B("dragonroost","Dragon Roost","Buildings","Wonders",{"Stone": 90, "Gold": 4, "Wood": 60, "Iron Bar": 10},"A great perch for a dragon. Dragon Tamers raise one here. A Mythic Wonder: you need the Dragon Tamer job to place it",{"foot": 4, "work": 120, "interior": 1, "station": "Dragon Tamer", "rarity": "Mythic", "needsJob": "Dragon Tamer"}),
+ B("starstemple","Temple of Stars","Buildings","Wonders",{"Crystal Shard": 10, "Cut Stone": 30, "Marble": 30, "Gold": 8},"An open temple under a dome of stars. Oracles read the Snap here. A Mythic Wonder: you need the Oracle job to place it",{"foot": 3, "work": 110, "interior": 1, "station": "Oracle", "rarity": "Mythic", "needsJob": "Oracle"}),
+ B("airshipdock","Airship Dock","Buildings","Wonders",{"Cloth": 20, "Planks": 60, "Fiber": 20, "Iron Bar": 12},"A mooring tower with its own airship. Sky Captains fly from here. A Mythic Wonder: you need the Sky Captain job to place it",{"foot": 4, "work": 110, "interior": 1, "station": "Sky Captain", "rarity": "Mythic", "needsJob": "Sky Captain"}),
+ B("runeforge","Rune Forge","Buildings","Wonders",{"Stone": 70, "Obsidian": 8, "Coal": 30, "Iron Bar": 10},"A dark forge of glowing runes. Runesmiths carve Runestones here. A Mythic Wonder: you need the Runesmith job to place it",{"foot": 3, "work": 100, "interior": 1, "station": "Runesmith", "rarity": "Mythic", "needsJob": "Runesmith"}),
+ B("clocktower","Clock Tower","Buildings","Wonders",{"Stone": 80, "Glass": 10, "Cut Stone": 30, "Gears": 10},"A tall tower whose clocks show the town's time. Timekeepers wind it. A Secret Wonder: you need the Timekeeper job to place it",{"foot": 3, "work": 130, "interior": 1, "station": "Timekeeper", "rarity": "Secret", "needsJob": "Timekeeper"}),
+ B("snapforge","Snap Forge","Buildings","Wonders",{"Crystal Shard": 20, "Obsidian": 10, "Cut Stone": 40, "Gold": 10},"A forge with a little rift above it. Snapsmiths make Lucky Sigils here. A Unknown Wonder: you need the Snapsmith job to place it",{"foot": 3, "work": 150, "interior": 1, "station": "Snapsmith", "rarity": "Unknown", "needsJob": "Snapsmith"}),
+ B("starloom","Star Loom","Buildings","Wonders",{"Crystal Shard": 12, "Cloth": 30, "Marble": 20, "Gold": 8},"A pavilion with a loom strung with starlight. Starweavers make Starcloth here. A Unknown Wonder: you need the Starweaver job to place it",{"foot": 3, "work": 150, "interior": 1, "station": "Starweaver", "rarity": "Unknown", "needsJob": "Starweaver"}),
+
+];
+const DECOR = [
+ ["Flower Bed","Garden",{Fiber:2},"Pretty flowers"],["Tree","Garden",{Wood:1},"Plant a tree. Gatherers can use it"],["Pine Tree","Garden",{Wood:1},"A tall pine. Gatherers can use it"],
+ ["Hedge","Garden",{Fiber:2},"A neat square hedge"],["Rock Garden","Garden",{Stone:3},"Neat little rocks"],["Lily Pond","Garden",{Stone:4},"A little pond with lily pads"],
+ ["Pumpkin Patch","Garden",{Fiber:3},"Big orange pumpkins"],["Glow Mushroom","Garden",{Glowcap:2},"A mushroom that glows"],
+ ["Bench","Outdoor",{Wood:4},"A place to sit"],["Picnic Table","Outdoor",{Wood:6},"Lunch outside"],["Fence","Outdoor",{Wood:2},"One tile of fence. R to turn it"],
+ ["Barrels","Outdoor",{Wood:3},"Stacked barrels"],["Crates","Outdoor",{Wood:3},"A pile of crates"],["Haystack","Outdoor",{Fiber:3},"Soft hay"],
+ ["Swing Set","Outdoor",{Wood:8},"Kids love it"],["Sandbox","Outdoor",{Wood:4},"For building tiny castles"],["Signpost","Outdoor",{Wood:2},"Points the way"],
+ ["Lamp Post","Lights",{Wood:2,Glass:1},"Lights up the night"],["Torch","Lights",{Wood:1},"A flickering torch"],["Campfire","Lights",{Wood:3,Stone:2},"A warm fire ring"],
+ ["Crystal Lamp","Lights",{"Crystal Shard":1,Stone:2},"Glows with crystal light"],["Lantern Line","Lights",{Wood:3,Fiber:2},"Hanging paper lanterns"],
+ ["Statue","Monuments",{Stone:10},"Honor your survivor"],["Fountain","Monuments",{Stone:8},"A little splashing fountain"],["Stone Arch","Monuments",{Stone:12},"A grand gateway"],
+ ["Totem","Monuments",{Wood:8},"Carved faces watch over the camp"],["Crystal Spire","Monuments",{"Crystal Shard":6},"Shining crystals from the Crystal Forest"],
+];
+const PATHS = [
+ ["Dirt Path",{},"Free"],["Gravel",{},"Free. Crunchy little stones"],["Sand Path",{},"Free. Soft sand"],["Plank Path",{Wood:1},"Wooden boards"],
+ ["Stone Path",{Stone:1},"Stone tiles"],["Cobblestone",{Stone:1},"Old-town cobbles"],["Brick Path",{Clay:1},"Red bricks in a pattern"],
+ ["Stepping Stones",{Stone:1},"Stones in the grass"],["Crystal Path",{"Crystal Shard":1},"Glowing tiles"],["Bridge",{Wood:3},"Can go over water. R to turn it"],
+];
+const TERRAIN = [
+ ["Raise","Lift the land by the Height step (1, 2, 4, 8 or 16). Brush 1, 3, 5 or 7 tiles."],
+ ["Lower","Dig the land down by the Height step."],
+ ["Flatten","Make the area level with the middle tile."],
+ ["Smooth","Round off bumps and cliffs."],
+ ["Dig Pond","Dig below the water line to make a pond or lake."],
+ ["Paint","Paint the ground: Grass, Meadow, Dirt, Sand, Stone, Snow, Moss, Clay, Crystal or Shroom."],
+ ["Ramp","Slope a tile up to the higher tile next to it. R to turn, tap again to remove."],
+ ["Dig Tunnel","Tap the side of a mountain to dig a tunnel (8, 12, 16, 20 or 24 tall). Tap a tunnel's ceiling to change its height. You can build inside tunnels."],
+];
+const FURN = [
+ ["Bed","Bedroom",{Wood:6},"One citizen moves in and rests here",1],["Bunk Bed","Bedroom",{Wood:12},"Two citizens can sleep here",2],
+ ["Crib","Bedroom",{Wood:4},"A bed for a baby or child. More cribs, more babies",1],["Wardrobe","Bedroom",{Wood:6},"Room for clothes"],
+ ["Nightstand","Bedroom",{Wood:2},"With a little candle"],["Chest","Bedroom",{Wood:3},"Stores belongings"],["Toy Box","Bedroom",{Wood:3},"Blocks, balls and a teddy"],
+ ["Sofa","Living",{Wood:4,Fiber:4},"Comfy seats for the family"],["Armchair","Living",{Wood:3,Fiber:2},"A big soft chair"],["Table","Living",{Wood:4},"For meals together"],
+ ["Chair","Living",{Wood:2},"Have a seat"],["Fireplace","Living",{Stone:10},"A crackling fire"],["Bookshelf","Living",{Wood:5},"Full of books"],
+ ["Piano","Living",{Wood:10},"Plink plonk"],["Rug","Living",{Fiber:3},"Other furniture can go on top"],["Round Rug","Living",{Fiber:3},"A soft round rug"],
+ ["Stove","Kitchen",{Stone:6},"Warm and cozy"],["Counter","Kitchen",{Wood:4,Stone:2},"For chopping veggies"],["Icebox","Kitchen",{Wood:3,Stone:3},"Keeps food fresh"],
+ ["Barrel","Kitchen",{Wood:2},"Full of apples"],["Dining Set","Kitchen",{Wood:8},"A table with four chairs"],
+ ["Potted Plant","Decor",{Fiber:2},"A bit of green inside"],["Lamp","Decor",{Wood:1,Glass:1},"Lights the room"],["Painting","Decor",{Wood:2,Fiber:1},"A painting on an easel"],
+ ["Fish Tank","Decor",{Glass:3},"Little fish swim around"],["Flower Vase","Decor",{Clay:2},"Fresh flowers"],["Rocking Horse","Decor",{Wood:4},"Giddy up!"],
+];
+const HALL = {1:{Wood:60,Stone:40,Planks:20},2:{Planks:40,Bricks:40,Glass:8,Tools:3},3:{"Cut Stone":30,Bricks:60,Gold:6,"Iron Bar":10}};
+const HALL_TIME = {1:600,2:3600,3:21600}, HALL_STORE={1:50,2:100,3:150}, HALL_CAP={1:2,2:3,3:4};
+const MILITARY = [
+ ["Iron Spearheads","Offense","+2 Attack per soldier",[30,70,150],[1,1,2]],
+ ["Archery Drills","Offense","+3 Attack per soldier",[50,110,220],[1,2,3],["10 Arrows","20 Arrows","40 Arrows"]],
+ ["Battle Tactics","Offense","+15% army attack",[120,300],[2,3]],
+ ["Reinforced Walls","Defense","+2 Defense for every wall and palisade",[30,70,150],[1,1,2]],
+ ["Watch Bells","Defense","+10 Defense for the whole colony",[60,140],[1,2],["4 Copper Bar","8 Copper Bar"]],
+ ["Soldier Armor","Defense","+3 Defense per soldier",[60,140,260],[1,2,3],["2 Armor","4 Armor","8 Armor"]],
+ ["Training Grounds","Army","Recruits train 25% faster",[50,120],[1,2]],
+];
+const ARMY = {"lines": [{"id": "soldier", "name": "Soldiers", "desc": "Foot soldiers patrol the streets and walls, and guard your castle gates."}, {"id": "archer", "name": "Archers", "desc": "Archers keep watch from castle walls and watchtowers, where they defend twice as well."}], "refund": 1, "arms": [{"line": "soldier", "name": "Soldier Weapons", "pct": 0.25, "id": "blade", "tiers": [{"name": "Spear", "desc": "A plain wooden spear"}, {"name": "Iron Sword", "hall": 1, "desc": "+25% soldier attack", "goods": {"Iron Bar": 6, "Weapons": 10}, "coins": 120}, {"name": "Steel Halberd", "hall": 2, "desc": "+50% soldier attack", "goods": {"Iron Bar": 16, "Weapons": 20}, "coins": 320}, {"name": "Starsteel Blade", "hall": 3, "desc": "+75% soldier attack", "goods": {"Iron Bar": 20, "Starsteel Bar": 4}, "coins": 750}], "stat": "atk"}, {"line": "archer", "name": "Archer Bows", "pct": 0.25, "id": "bow", "tiers": [{"name": "Shortbow", "desc": "A simple wooden bow"}, {"name": "Longbow", "hall": 1, "desc": "+25% archer attack", "goods": {"Arrows": 30, "Planks": 10}, "coins": 110}, {"name": "Recurve Bow", "hall": 2, "desc": "+50% archer attack", "goods": {"Arrows": 60, "Leather": 8}, "coins": 300}, {"name": "Crossbow", "hall": 3, "desc": "+75% archer attack", "goods": {"Iron Bar": 16, "Gears": 10}, "coins": 700}], "stat": "atk"}, {"line": "all", "name": "Armor", "pct": 0.3, "id": "armor", "tiers": [{"name": "Padded Cloth", "desc": "Quilted cloth"}, {"name": "Leather Armor", "hall": 1, "desc": "+30% defense for every unit", "goods": {"Leather": 12}, "coins": 100}, {"name": "Chainmail", "hall": 2, "desc": "+60% defense for every unit", "goods": {"Armor": 6, "Iron Bar": 10}, "coins": 300}, {"name": "Plate Armor", "hall": 3, "desc": "+90% defense for every unit", "goods": {"Armor": 14, "Gold": 4}, "coins": 750}], "stat": "def"}], "posted": 1, "slots": [2, 3, 4], "units": [{"atk": 5, "def": 2, "id": "militia", "line": "soldier", "name": "Militia", "tier": 0, "desc": "A citizen handed a spear. Made by the Recruit job or the War Room's quick training.", "time": 0}, {"atk": 8, "def": 5, "id": "footman", "coins": 60, "line": "soldier", "name": "Footman", "tier": 1, "level": 1, "desc": "A trained foot soldier with a shield. Patrols the town and its walls.", "time": 7200}, {"atk": 13, "def": 9, "id": "manatarms", "coins": 180, "line": "soldier", "name": "Man-at-Arms", "tier": 2, "level": 2, "desc": "A veteran in heavier kit with a kite shield. Guards the gates.", "time": 14400}, {"atk": 21, "def": 15, "id": "knight", "coins": 450, "line": "soldier", "name": "Knight", "tier": 3, "level": 3, "desc": "The finest soldier in the land: plumed helm, cape and a great steel shield.", "time": 28800}, {"atk": 9, "def": 3, "id": "archer", "coins": 50, "line": "archer", "name": "Archer", "tier": 1, "level": 1, "desc": "A trained bowman with a quiver. Climbs walls and towers to keep watch.", "time": 7200}, {"atk": 15, "def": 5, "id": "marksman", "coins": 160, "line": "archer", "name": "Marksman", "tier": 2, "level": 2, "desc": "A sharp-eyed shooter in a hood who never misses at the walls.", "time": 14400}, {"atk": 24, "def": 8, "id": "ranger", "coins": 400, "line": "archer", "name": "Ranger", "tier": 3, "level": 3, "desc": "A master archer in a forest cloak with a feather in the hood.", "time": 28800}]};
+const BIOMES = ["Grassland","Forest","Pine Forest","Jungle","Mushroom Grove","Crystal Forest","Desert","Mountains","Mountain Valley","Chasm","Snowy Peaks","Snowfield","Tundra","Beach","Giant Lake","Ocean","Ice Sheet","Caves"];
+const LOGIN = [[10],[15],[20,"20 Planks"],[25],[30,"40 Stone"],[40],[75,"50 Planks, 20 Bread",1]];
+const DAILY = [["Roll 15 times",12],["Gather 150 resources",12],["Finish 2 buildings",15],["Place 10 things from Build",10],["Explore 3 new areas",12],["Visit a friend and gather 40 items for them",15],["Welcome 1 visitor to your world",15]];
+const WEEKLY = [["Roll 120 times",70,"40 Planks"],["Gather 1,500 resources",70],["Finish 10 buildings",90,"80 Stone"],["Explore 20 new areas",70],["Gather 300 items in friends' worlds",90],["Welcome 3 visitors",80],["Place 60 things from Build",60]];
+const VISITOR_TIERS = [["Helping hand","Gather items in friends' worlds",[50,250,1000,5000],[15,40,100,250]],["Traveler","Visit worlds",[1,5,20,50],[10,30,80,200]],["Host","Welcome visitors to your world",[1,5,20,50],[15,40,100,250]]];
+const BADGES = [["First Snap","Roll for the first time",5],["Lucky Hands","Roll 500 times",50],["Town Planner","Finish 25 buildings",40],["Hard Worker","Gather 10,000 resources",50],["Pathfinder","Explore 100 areas",40],["Small Town","Have 15 citizens in one world",30],["Big City","Have 40 citizens in one world",100],["Good Host","Welcome 10 visitors",40],["Good Neighbor","Gather 1,000 items in friends' worlds",60],["Regular","Log in 7 days in a row",50]];
+const BOARDS = [["Biggest town","citizens"],["Most rolls","rolls"],["Master builders","buildings finished"],["Best helpers","items gathered for friends"],["Most liked","Likes from visitors"]];
+const PASSES = [["2x Resources",99,"Doubles your colony's gathered resources and crafted goods. Storage limits still apply."],["4x Luck",299,"Multiplies your Snap luck by 4. Rarer things become more likely; nothing is guaranteed."],["5x Storage",299,"Every storage limit in your worlds is 5 times bigger."],["Infinite Storage",999,"No storage limits at all."]];
+const PRODUCTS = [["Starter Pack",9,"100 Wood, 100 Stone, 200 Food (Apples and Berries) and +300 storage for good. Always given in full. One time per world."],["Handful of Gems",25,"25 Gems"],["Pouch of Gems",50,"50 Gems"],["Chest of Gems",100,"100 Gems"],["Royal Gem Vault",250,"250 Gems"],["Lucky Hour",79,"2x Snap luck for one hour. Stacks with 4x Luck.",1],["Master Builders",99,"Instantly finish every building and upgrade under construction.",1]];
+const HELPER_TOOLS = [["Axe","Chop trees for wood"],["Pickaxe","Mine rocks, ores and crystals"],["Sickle","Cut flowers, herbs and mushrooms"],["Fishing Rod","Catch fish at the shore"],["Bow","Hunt animals (and skeletons) from afar"],["Sword","Fight skeletons in caves"]];
+
+/* ============================================================ indexes */
+const ITEM = {}; ITEMS.forEach(([name,rarity,cat,note])=>ITEM[name]={name,rarity,cat,note,food:note==="food"||cat==="Food"});
+JOBS.forEach(([job,rarity])=>ITEM[job+" Job"]={name:job+" Job",rarity,cat:"Job",job});
+const ALL_ITEMS = Object.values(ITEM);
+const JOB = {}; JOBS.forEach(([job,rarity,desc,station])=>JOB[job]={job,rarity,desc,station,rolled:true});
+SPECIAL_JOBS.forEach(([job,desc])=>JOB[job]={job,desc,rolled:false});
+const BLD = {}; BUILD.forEach(b=>BLD[b.id]=b);
+const BLD_BY_NAME = {}; BUILD.forEach(b=>BLD_BY_NAME[b.name]=b);
+const GATHERED_BY = {}; for (const [job,list] of Object.entries(GATHERS)) for (const r of list) (GATHERED_BY[r]=GATHERED_BY[r]||[]).push(job);
+const ROLLABLE = ALL_ITEMS.filter(i=>i.cat!=="Goods");
+const LIMIT = {"Legendary": 5, "Mythic": 3, "Secret": 2, "Unknown": 1};
+const WHEN = {"meteor": "during a Meteor Shower", "night": "at night", "snow": "while it snows", "rain": "while it rains", "storm": "in a thunderstorm or heavy rain", "visitor": "while a friend is visiting", "citizens50": "once your town has 50 citizens", "day100": "from day 100 on"};
+const ROLL_WHEN = {"Stardust": "meteor", "Ghostwood": "night", "Eclipse Stone": "snow", "Rainbow Quartz": "rain", "Kraken Ink": "storm", "Snap Egg": "visitor", "Ghost Lantern": "night", "Crown of the First King": "citizens50", "Timekeeper Job": "day100", "Ghost Keeper Job": "night"};
+const HIGH = r=>["Legendary","Mythic","Secret","Unknown"].includes(r);
+const RCOUNT = {}; ROLLABLE.forEach(i=>RCOUNT[i.rarity]=(RCOUNT[i.rarity]||0)+1);
+
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n=>{ if(n>=100) return Math.round(n).toLocaleString(); if(n>=10) return n.toFixed(1).replace(/\.0$/,""); return n.toFixed(2).replace(/0$/,"").replace(/\.0$/,""); };
+const time = s=>{ s=Math.ceil(s); if(s>=3600){const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h+"h"+(m?" "+m+"m":"");} if(s>=60){const m=Math.floor(s/60),r=s%60;return m+" min"+(r?" "+r+"s":"");} return s+"s"; };
+const sellOf = name=>{ if(SELL[name]!=null) return SELL[name]; const i=ITEM[name]; return i&&["Material","Food","Goods"].includes(i.cat)?RAW[i.rarity]:0; };
+
+function luckWeights(L){ const w={}; let t=0; RAR.forEach((r,i)=>{w[r]=WEIGHT[r]*(i>0?L:1); t+=w[r];}); return {w,t}; }
+function chance(name,L=1){ const i=ITEM[name]; if(!i||i.cat==="Goods") return 0; const {w,t}=luckWeights(L); return w[i.rarity]/t/RCOUNT[i.rarity]; }
+
+/* links */
+const itemChip = (name,q)=>{ const i=ITEM[name]; const r=i?i.rarity:"Common"; return `<button class="chip r-${r}" data-open="item:${esc(name)}"><i class="gem"></i>${q!=null?`<span class="q num">${q}</span>`:""}${esc(name)}</button>`; };
+const jobChip = j=>{ const J=JOB[j]; return `<button class="chip ${J&&J.rarity?"r-"+J.rarity:""}" data-open="job:${esc(j)}">${J&&J.rarity?'<i class="gem"></i>':""}${esc(j)}</button>`; };
+const bldChip = id=>{ const b=BLD[id]; return b?`<button class="chip" data-open="bld:${id}">${esc(b.name)}</button>`:""; };
+const costSpans = c=>Object.keys(c).map(n=>{const i=ITEM[n];return `<span class="chip ${i?"r-"+i.rarity:""}">${i?'<i class="gem"></i>':""}<span class="q num">${c[n]}</span>${esc(n)}</span>`;}).join("");
+const costChips = c=>{ const k=Object.keys(c); return k.length?k.map(n=>ITEM[n]?itemChip(n,c[n]):`<span class="chip"><span class="q num">${c[n]}</span>${esc(n)}</span>`).join(""):'<span class="chip">Free</span>'; };
+
+function upCost(b,lv){ if(b.hall) return HALL[lv]; if(lv===1) return {...b.cost}; const mul=lv===2?.6:1, c={}; for(const[k,v] of Object.entries(b.cost)) c[k]=Math.max(1,Math.ceil(v*mul)); if(lv===2) c.Planks=(c.Planks||0)+6+(b.foot||1)*2; else {c.Bricks=(c.Bricks||0)+8+(b.foot||1)*3; c.Tools=(c.Tools||0)+1;} return c; }
+function buildTime(b,lv){ if(b.hall) return HALL_TIME[lv]; const base=Math.max(5,Math.floor((b.work||20)*1.25+.5)); return lv===1?base:lv===2?base*8:base*40; }
+
+/* ============================================================ "how to get" + "used for" */
+function howToGet(name){
+  const i=ITEM[name], out=[];
+  if(!i) return out;
+  if(i.cat==="Material"||i.cat==="Food"){
+    const who=(GATHERED_BY[name]||["Gatherer"]);
+    out.push(`<b>Roll it with Snap</b> to learn it. Rolling teaches your citizens where to find it; it doesn't hand you a pile.`);
+    out.push(`<b>Then your ${who.map(j=>jobChip(j)).join(" ")} collect it</b>${PLACE[name]?` from ${PLACE[name]}`:""}. Give citizens that job in People.`);
+    out.push(`<b>Roll it again</b> to raise its mastery (up to level 5). Each level brings back more per trip.`);
+    if(HIGH(i.rarity)) out.push(`<b>Its source is out in the world.</b> They turn up as you explore${PLACE[name]?": "+esc(PLACE[name]):""}. When you roll it and your land has none yet, one appears for you.`);
+    if(["Common","Uncommon","Rare"].includes(i.rarity)) out.push(`<b>Already fully mastered?</b> Rolling it again gives you a pile of it instead: ${({Common:15,Uncommon:10,Rare:5})[i.rarity]}.`);
+    if(ROLL_WHEN[name]) out.push(`<b>Only rolls ${esc(WHEN[ROLL_WHEN[name]])}.</b>`);
+    if(name==="Wood"||name==="Stone") out.push(`Your first five Snaps are always Miner Job, Gatherer Job, Stone, Wood and Builder Job, so you start with this one.`);
+    if(name==="Glass") out.push(`Or craft it: ${recipeInline(RECIPES.find(r=>r.out==="Glass"))}`);
+    const bonus = {Wood:"Lumber Mill: +2 Wood every trip.",Stone:"Quarry: +1 per trip.",Clay:"Quarry: +1 per trip.","Iron Ore":"Quarry: +1 per trip.",Fish:"Fishing Hut: +2 Fish.",Meat:"Hunting Lodge: +1 per trip.",Hide:"Hunting Lodge: +1 per trip."}[name];
+    if(bonus) out.push(`<b>Boost it:</b> ${bonus}`);
+    if(i.food) out.push(`<b>Boost it:</b> a Bakery adds +1 to every food trip, and Autumn adds +1 more.`);
+  } else if(i.cat==="Goods"){
+    const rs=RECIPES.filter(r=>r.out===name);
+    out.push(`<b>Crafted, never rolled.</b> A worker walks to a workplace, uses the inputs and makes the output. Needs the job unlocked and the building built.`);
+    if(name==="Planks"||name==="Cut Stone") out.push(`<b>Queue it first.</b> ${esc(name)} is only made when you order it, so your ${name==="Planks"?"Wood":"Stone"} is saved for building. Open the Bag, tap ${esc(name)} and pick +10, +50, +100 or +250.`);
+    rs.forEach(r=>out.push(recipeInline(r)));
+    if(["Planks","Bread","Stone"].includes(name)) {}
+    const reward = {Planks:"Also from login rewards (days 3 and 7) and the Roll weekly goal.",Bread:"Also from the day 7 login reward."}[name];
+    if(reward) out.push(reward);
+  } else if(i.cat==="Job"){
+    out.push(`<b>Roll it with Snap.</b> It's ${i.rarity}: about ${pct(chance(name))} per Snap at base luck.`);
+    out.push(`Once unlocked, open People and give any adult citizen the ${esc(i.job)} job.`);
+    if(LIMIT[i.rarity]) out.push(`<b>Limited:</b> only ${LIMIT[i.rarity]===1?"1 citizen":LIMIT[i.rarity]+" citizens"} can have it at a time.`);
+    if(ROLL_WHEN[name]) out.push(`<b>Only rolls ${esc(WHEN[ROLL_WHEN[name]])}.</b>`);
+    if(i.job==="Miner"||i.job==="Gatherer"||i.job==="Builder") out.push(`One of your guaranteed first five Snaps.`);
+  } else if(i.cat==="Special"){
+    out.push(`<b>Roll it with Snap.</b> ${i.rarity}: about ${pct(chance(name))} per Snap at base luck, ${oneIn(chance(name))}.`);
+    if(ROLL_WHEN[name]) out.push(`<b>Only rolls ${esc(WHEN[ROLL_WHEN[name]])}.</b>`);
+  }
+  return out;
+}
+function recipeInline(r){ return `<span class="recipe">${Object.entries(r.inp).map(([k,v])=>itemChip(k,v)).join("")}<span class="arrow">→</span>${itemChip(r.out,r.n)}<span class="where">${jobChip(r.job)} at ${r.at.map(bldChip).join(" or ")}</span></span>`; }
+function usedFor(name){
+  const uses=[];
+  const rs=RECIPES.filter(r=>r.inp[name]);
+  if(rs.length) uses.push({h:"Crafting",html:rs.map(recipeInline).join("")});
+  const bs=BUILD.filter(b=>b.cost[name]);
+  const ds=DECOR.filter(d=>d[2][name]).map(d=>d[0]).concat(PATHS.filter(p=>p[1][name]).map(p=>p[0])).concat(FURN.filter(f=>f[2][name]).map(f=>f[0]));
+  if(bs.length) uses.push({h:"Building",html:`<div class="chips">${bs.map(b=>bldChip(b.id)).join("")}</div>`});
+  if(ds.length) uses.push({h:"Decorations, paths and furniture",html:`<div class="chips">${ds.map(n=>`<span class="chip">${esc(n)}</span>`).join("")}</div>`});
+  const up={Planks:"Every level II building upgrade needs Planks.",Bricks:"Every level III building upgrade needs Bricks.",Tools:"Every level III building upgrade needs 1 Tools. Town Hall II needs 3."}[name];
+  const hall=[2,3].filter(l=>HALL[l][name]).map(l=>"Town Hall "+["","I","II","III"][l]);
+  if(up||hall.length) uses.push({h:"Upgrades",html:`<p>${up?up+" ":""}${hall.length?`Also: ${hall.join(", ")}.`:""}</p>`});
+  const war={Weapons:"Quick militia in the War Room: 25 Coins + 1 Weapons. Recruits need Weapons to finish training. The Armory's Iron Sword and Steel Halberd need Weapons too.",Leather:"Armory: Leather Armor (12) and the Recurve Bow (8).","Iron Bar":"Armory: Iron Sword, Steel Halberd, Starsteel Blade, Crossbow and Chainmail.",Gears:"Armory: the Crossbow (10).",Gold:"Armory: Plate Armor (4).","Starsteel Bar":"Armory: the Starsteel Blade (4).",Arrows:"War Room: Archery Drills. Armory: Longbow (30) and Recurve Bow (60).","Copper Bar":"War Room: Watch Bells.",Armor:"War Room: Soldier Armor. Armory: Chainmail (6) and Plate Armor (14)."}[name];
+  if(war) uses.push({h:"War Room",html:`<p>${war}</p>`});
+  const i=ITEM[name];
+  if(i&&i.food) uses.push({h:"Food",html:`<p>Citizens eat it, and couples need 4 food for a baby. Granaries hold +200 more food.</p>`});
+  if(name==="Medicine") uses.push({h:"Health",html:`<p>With Medicine in stock, everyone works 20% faster ("HEALTHY +20%").</p>`});
+  if(name==="Herbs") {}
+  return uses;
+}
+const pct = p=>p>=.1?(p*100).toFixed(1)+"%":p>=.01?(p*100).toFixed(2)+"%":(p*100).toFixed(3)+"%";
+const oneIn = p=>p>0?"about 1 in "+Math.round(1/p).toLocaleString():"";
+
+/* ============================================================ chapters */
+const CH = [
+ ["start","Start here"],["snap","The Snap"],["items","Items"],["jobs","Jobs"],["crafting","Crafting"],["buildings","Buildings"],
+ ["town","Town & Money"],["army","Army"],["life","Citizen life"],["world","World"],["visiting","Visiting"],["rewards","Rewards"],["shop","Shop"],["controls","Controls"],
+];
+const tabsEl=document.getElementById("tabs"), main=document.getElementById("main");
+let state = {ch:"start", itemCat:"All", itemRar:"All", bSub:"Housing", luck:{power:5,shrines:0,crystals:0,pass:false,hour:false,meteor:false}};
+
+function render(){
+  tabsEl.innerHTML = CH.map(([id,n])=>`<button role="tab" id="tab-${id}" aria-selected="${state.ch===id}" data-ch="${id}">${n}</button>`).join("");
+  main.innerHTML = `<section class="chapter" role="tabpanel" aria-labelledby="tab-${state.ch}">${VIEWS[state.ch]()}</section>`;
+  if(state.ch==="snap") wireLab();
+}
+function go(ch,push=true){ if(!VIEWS[ch]) ch="start"; state.ch=ch; try{localStorage.setItem("codex.ch",ch)}catch(e){} if(push) history.replaceState(null,"","#"+ch); render(); window.scrollTo({top:0}); const t=document.getElementById("tab-"+ch); t&&t.scrollIntoView({inline:"nearest",block:"nearest"}); }
+
+const head = (eye,title,lede)=>`<div class="head"><span class="eyebrow">${eye}</span><h2>${title}</h2>${lede?`<p class="lede muted">${lede}</p>`:""}</div>`;
+
+const VIEWS = {
+start(){ return `
+ ${head("Snap Into Existance","Snap a world into being",`You're the god of a tiny planet. Every Snap rolls something random, from Common Wood to a Mythic new citizen. Your citizens do the work: they gather, craft, build, make friends and raise families. This codex shows how to get everything and what it does.`)}
+ <ol class="loop">
+  <li><b>Snap</b><span>Roll for a resource, a job or something special.</span></li>
+  <li><b>Learn</b><span>A rolled resource is learned, so citizens can go and collect it.</span></li>
+  <li><b>Assign</b><span>Open People and give citizens the jobs you've unlocked.</span></li>
+  <li><b>Gather</b><span>Gatherers, Miners, Lumberjacks and friends bring things home.</span></li>
+  <li><b>Craft</b><span>Workers turn raw stuff into Planks, Bricks, Tools and more.</span></li>
+  <li><b>Build</b><span>Place homes and workplaces. Builders put them up.</span></li>
+  <li><b>Upgrade</b><span>Turn the camp into a Town Hall and level buildings up to III.</span></li>
+  <li><b>Grow</b><span>Citizens work, eat out and pay taxes in Coins, couples have babies, the town grows.</span></li>
+ </ol>
+ <div class="cols">
+  <div class="panel stack"><h3>Your first ten minutes</h3><ul class="dots">
+   <li>Your first five Snaps are fixed: Miner Job, Gatherer Job, Stone, Wood, Builder Job.</li>
+   <li>Give your first citizens the Gatherer, Miner and Builder jobs in ${link("jobs","People")}.</li>
+   <li>Build a ${bld("hut")} and put a Bed inside (look inside, then Furniture). Every citizen needs a bed.</li>
+   <li>Build a ${bld("shed")} once storage fills up (150 of each thing to start).</li>
+   <li>Save up 60 Wood, 40 Stone and 20 Planks, then tap the camp and upgrade it into a ${bld("townhall")}.</li>
+  </ul></div>
+  <div class="panel stack"><h3>What's in the game</h3><ul class="plain">
+   <li><b class="num">${ROLLABLE.length}</b> things the Snap can roll, across ${RAR.length} rarities</li>
+   <li><b class="num">${ALL_ITEMS.filter(i=>i.cat==="Goods").length}</b> crafted goods from <b class="num">${RECIPES.length}</b> recipes</li>
+   <li><b class="num">${JOBS.length+2}</b> jobs, including Recruit and Soldier</li>
+   <li><b class="num">${BUILD.length}</b> buildings, <b class="num">${DECOR.length}</b> decorations, <b class="num">${PATHS.length}</b> paths, <b class="num">${FURN.length}</b> furniture pieces</li>
+   <li><b class="num">${BIOMES.length}</b> biomes to explore, counting caves</li>
+  </ul></div>
+ </div>
+ <div class="note">Tip: search at the top for anything by name. Every item, job and building opens a card that links to what it's made from and what it's used for.</div>`; },
+
+snap(){ return `
+ ${head("The Snap","Rolling and luck",`Press SNAP to roll. The game first picks a rarity, then picks one thing of that rarity at random. Luck makes every rarity above Common more likely. The cooldown is 1 second, or 0.8 at night (rolls are 25% faster at night).`)}
+ <div class="lab">
+  <div class="panel ctrl" id="lab">
+   <div class="stack"><span class="eyebrow">Your luck</span><div class="bigluck num" id="luckOut">x1.10</div><p class="muted" id="luckWhy" style="font-size:.86rem"></p></div>
+   <label for="lPower"><span class="row"><span>Power</span><span class="num" id="lPowerV"></span></span><input type="range" id="lPower" min="0" max="100" step="1"></label>
+   <label for="lShrines"><span class="row"><span>Snap Shrines built</span><span class="num" id="lShrinesV"></span></span><input type="range" id="lShrines" min="0" max="10" step="1"></label>
+   <label for="lCrystals"><span class="row"><span>Snap Crystals rolled</span><span class="num" id="lCrystalsV"></span></span><input type="range" id="lCrystals" min="0" max="10" step="1"></label>
+   <label class="toggle" for="lPass">4x Luck gamepass<input type="checkbox" id="lPass"></label>
+   <label class="toggle" for="lHour">Lucky Hour (2x)<input type="checkbox" id="lHour"></label>
+   <label class="toggle" for="lMeteor">Meteor shower (+50%)<input type="checkbox" id="lMeteor"></label>
+  </div>
+  <div class="stack" style="min-width:0">
+   <div class="ladder" id="ladder" aria-hidden="true">${RAR.map(r=>`<div class="r-${r}" data-r="${r}"></div>`).join("")}</div>
+   <div class="ladderkey">${RAR.map(r=>`<span class="r-${r}"><i class="gem"></i>${r}</span>`).join("")}</div>
+   <div class="tablewrap"><table><thead><tr><th>Rarity</th><th class="r">Things</th><th class="r">Chance per Snap</th><th class="r">Each thing</th></tr></thead><tbody id="oddsBody"></tbody></table></div>
+  </div>
+ </div>
+ <div class="cols">
+  <div class="panel stack"><h3>How luck adds up</h3><p>Luck = (1 + Power ÷ 50 + Shrines × 0.2 + Crystals × 0.25) × gamepass × Lucky Hour × meteor shower.</p>
+   <ul class="dots"><li><b>Power</b> (0 to 100%) comes from homes, wells, taverns, fountains, obelisks, new citizens and Snap Crystals. Full power alone triples your luck.</li>
+   <li><b>Snap Shrine</b>: +0.2 luck each, forever.</li><li><b>Snap Crystal</b> (Legendary roll): +0.25 luck and +10% power.</li>
+   <li><b>Meteor showers</b> happen some nights: +50% while they last.</li></ul></div>
+  <div class="panel stack"><h3>What a roll does</h3><ul class="dots">
+   <li><b>Resource</b>: your citizens learn it. Already known? Its mastery goes up a level (max 5), so they bring back more.</li>
+   <li><b>Job</b>: unlocks that job for your citizens.</li>
+   <li><b>New Citizen / Twin Citizens</b>: they appear at your colony.</li>
+   <li><b>Map Fragment</b>: the fog lifts from a random area.</li>
+   <li><b>Cradle Blessing</b>: 4 Wood, 2 Fiber, 4 Berries.</li>
+   <li>Group members can switch on <b>Auto-roll</b>. It pauses while menus or building tools are open.</li></ul></div>
+ </div>
+ <div class="cols">
+  <div class="panel stack" style="align-self:start"><h3>Lucky Snaps</h3><ul class="dots">
+   <li>Every 10th Snap is a <b>Lucky Snap</b> with double luck. The line above the Snap button counts down to it.</li>
+   <li><b>Golden Snaps</b> (from the Golden Snap special or a Snapsmith's Lucky Sigil) are always Rare or better.</li>
+   <li>An <b>Oracle</b> shows the rarity of your next Snap before you press it.</li></ul></div>
+  <div class="panel stack" style="align-self:start"><h3>Mastered rolls</h3><ul class="dots">
+   <li>Roll a Common, Uncommon or Rare resource you've already mastered to level 5 and you get a pile of it instead.</li>
+   <li><b class="num">15</b> for a Common, <b class="num">10</b> for an Uncommon, <b class="num">5</b> for a Rare.</li></ul></div>
+ </div>
+ <div class="cols">
+  <div class="panel stack" style="align-self:start"><h3>The top four tiers</h3><ul class="dots">
+   <li>Each plays its own film: <b class="r-Legendary rtext">Legendary</b> a golden eclipse, <b class="r-Mythic rtext">Mythic</b> a supernova, <b class="r-Secret rtext">Secret</b> the Watcher, <b class="r-Unknown rtext">Unknown</b> a jump to lightspeed that ends at the Void. Click to skip to the reveal.</li>
+   <li>Mythic, Secret and Unknown rolls are announced in the chat to the whole server.</li>
+   <li>Jobs from these tiers are limited: <b class="num">5</b> citizens per Legendary job, <b class="num">3</b> per Mythic, <b class="num">2</b> per Secret and only <b class="num">1</b> per Unknown.</li></ul></div>
+  <div class="panel stack" style="align-self:start"><h3>Rolls that wait for the moment</h3><ul class="dots">
+   ${Object.entries(ROLL_WHEN).map(([n,w])=>`<li>${itemChip(n)} only rolls ${esc(WHEN[w])}.</li>`).join("")}</ul></div>
+ </div>`; },
+
+items(){
+  const cats=["All","Material","Food","Goods","Special","Job"], labels={All:"All",Material:"Materials",Food:"Food",Goods:"Crafted goods",Special:"Special",Job:"Jobs"};
+  const list=ALL_ITEMS.filter(i=>(state.itemCat==="All"||i.cat===state.itemCat)&&(state.itemRar==="All"||i.rarity===state.itemRar));
+  return `${head("Items","Everything you can have",`Materials and food are rolled, then gathered. Goods are only ever crafted. Tap one to see how to get it and what it's for.`)}
+  <div class="filters"><span class="flab">Type</span>${cats.map(c=>`<button data-icat="${c}" aria-pressed="${state.itemCat===c}">${labels[c]}</button>`).join("")}</div>
+  <div class="filters"><span class="flab">Rarity</span><button data-irar="All" aria-pressed="${state.itemRar==="All"}">Any</button>${RAR.map(r=>`<button class="r-${r}" data-irar="${r}" aria-pressed="${state.itemRar===r}"><i class="gem"></i>${r}</button>`).join("")}</div>
+  <p class="count">${list.length} shown</p>
+  <div class="grid">${list.map(i=>`<button class="tile r-${i.rarity}" data-open="item:${esc(i.name)}"><span class="nm"><i class="gem"></i>${esc(i.name)}</span><span class="sub">${esc(tileSub(i))}</span></button>`).join("")}</div>`; },
+
+jobs(){ return `${head("Jobs","Who does what",`Roll a job to unlock it, then give it to any adult in People. Gathering jobs work out in the world. Workshop jobs need their building and turn materials into goods.`)}
+  <div class="grid">${JOBS.map(([j,r,d,st])=>`<button class="tile r-${r}" data-open="job:${esc(j)}"><span class="nm"><i class="gem"></i>${esc(j)}</span><span class="sub">${esc(d)}</span></button>`).join("")}</div>
+  <h3>Not rolled</h3>
+  <div class="grid">${SPECIAL_JOBS.map(([j,d])=>`<button class="tile" data-open="job:${esc(j)}"><span class="nm">${esc(j)}</span><span class="sub">${esc(d)}</span></button>`).join("")}</div>
+  <div class="note">Citizens have three stats: Strength, Wits and Speed. Each job leans on one of them, so a strong citizen makes a good Miner or Smith and a quick one a good Hunter or Explorer.</div>`; },
+
+crafting(){
+  const groups={}; RECIPES.forEach(r=>{const k=r.at[0]; (groups[k]=groups[k]||[]).push(r);});
+  return `${head("Crafting","Recipes",`Workers walk to their workplace, use the inputs and make the output. Every level a workplace is upgraded, its workers make 1 more each time.`)}
+  <div class="note"><b>Planks and Cut Stone are made to order.</b> Open the Bag, tap Planks or Cut Stone and queue +10, +50, +100 or +250. Nothing is made until you do, so your Wood and Stone stay free for building. Everything else is crafted automatically.</div>
+  <div class="tablewrap"><table><thead><tr><th>Makes</th><th>From</th><th>Job</th><th>Where</th><th class="r">Sells for</th></tr></thead><tbody>
+  ${RECIPES.map(r=>`<tr><td>${itemChip(r.out,r.n)}</td><td><div class="chips">${Object.entries(r.inp).map(([k,v])=>itemChip(k,v)).join("")}</div></td><td>${jobChip(r.job)}</td><td><div class="chips">${r.at.map(bldChip).join("")}</div></td><td class="r num crown">${fmt(sellOf(r.out))}</td></tr>`).join("")}
+  </tbody></table></div>
+  <div class="note">Long chains pay best. Charters sell for 9 Coins each and need Manuscripts plus Trade Goods, which need Pottery, which needs Clay.</div>`; },
+
+buildings(){
+  const subs=["Housing","Production","Crafting","Community","Defense","Special","Wonders","Decorations","Paths","Terrain","Furniture"];
+  let body="";
+  if(["Decorations","Paths","Terrain","Furniture"].includes(state.bSub)){
+    if(state.bSub==="Decorations") body=`<p class="muted">Decorations make the town nicer to live in. Trees you plant can be used by Gatherers.</p><div class="grid">${DECOR.map(([n,s,c,d])=>`<div class="tile" style="cursor:default"><span class="nm">${esc(n)}</span><span class="sub">${esc(s)} · ${esc(d)}</span><div class="chips">${costChips(c)}</div></div>`).join("")}</div>`;
+    if(state.bSub==="Paths") body=`<p class="muted">Paths are drawn one tile at a time. Bridges can cross water.</p><div class="grid">${PATHS.map(([n,c,d])=>`<div class="tile" style="cursor:default"><span class="nm">${esc(n)}</span><span class="sub">${esc(d)}</span><div class="chips">${costChips(c)}</div></div>`).join("")}</div>`;
+    if(state.bSub==="Terrain") body=`<p class="muted">Terrain tools are free. They're in the Build menu under Terrain.</p><div class="grid">${TERRAIN.map(([n,d])=>`<div class="tile" style="cursor:default"><span class="nm">${esc(n)}</span><span class="sub">${esc(d)}</span></div>`).join("")}</div>`;
+    if(state.bSub==="Furniture") body=`<p class="muted">Furniture goes inside buildings: tap a building, then Look inside. Beds are what let citizens move in.</p><div class="grid">${FURN.map(([n,s,c,d,sl])=>`<div class="tile" style="cursor:default"><span class="nm">${esc(n)}${sl?` <span class="chip">sleeps ${sl}</span>`:""}</span><span class="sub">${esc(s)} · ${esc(d)}</span><div class="chips">${costChips(c)}</div></div>`).join("")}</div>`;
+  } else {
+    const list=BUILD.filter(b=>b.sub===state.bSub);
+    body=`<div class="grid">${list.map(b=>`<button class="tile" data-open="bld:${b.id}"><span class="nm">${esc(b.name)}</span><span class="sub">${esc(b.desc)}</span><div class="chips">${costSpans(b.cost)}</div></button>`).join("")}</div>`;
+  }
+  return `${head("Buildings","What to build",`Place things from the Build menu. Builders walk to each site and put it up. Buildings go up to level III. Tap a building to see what it does and what each upgrade costs.`)}
+  <div class="filters">${subs.map(s=>`<button data-bsub="${s}" aria-pressed="${state.bSub===s}">${s}</button>`).join("")}</div>
+  ${body}
+  <div class="note">Construction keeps going while you're offline. In a hurry? Finish any build early for 1 Gem per minute left.</div>`; },
+
+town(){
+  const sells=Object.entries(SELL).sort((a,b)=>b[1]-a[1]);
+  return `${head("Town & Money","Running the colony",`Power, people, storage and money. These are the numbers behind your town.`)}
+  <div class="cols">
+   <div class="panel stack"><h3>Power</h3><p>Power (0 to 100%) is how strong your world feels. It raises your Snap luck: full power alone makes luck x3.</p>
+    <div class="tablewrap"><table><tbody>
+     <tr><td>Each home</td><td class="r num">+1 to +6 (its size)</td></tr><tr><td>Snap Obelisk</td><td class="r num">+6</td></tr><tr><td>Tavern</td><td class="r num">+4</td></tr>
+     <tr><td>Plaza Fountain, Town Hall</td><td class="r num">+3</td></tr><tr><td>Well, Market Stall</td><td class="r num">+2</td></tr>
+     <tr><td>Shed, Storehouse, Granary, Kitchen, Forge, Kiln, Infirmary</td><td class="r num">+1</td></tr>
+     <tr><td>New Citizen (roll)</td><td class="r num">+3 each</td></tr><tr><td>Snap Crystal (roll)</td><td class="r num">+10</td></tr>
+    </tbody></table></div></div>
+   <div class="panel stack"><h3>Population</h3><ul class="dots">
+    <li>You start with room for 4 citizens. The Town Hall adds +2, +3 and +4 at levels I to III, and a Nursery adds +2.</li>
+    <li>Every citizen needs a bed. Homes give room; furniture beds let people move in.</li>
+    <li>Couples have a baby when there's a free bed and 4 food. A baby takes 30 minutes to arrive.</li>
+    <li>Babies grow into children, then adults. A School makes them grow up 50% faster.</li>
+    <li>Citizens have birthdays (+5 Coins party), make best friends and grow old.</li></ul></div>
+   <div class="panel stack"><h3>Storage</h3><ul class="dots">
+    <li>Every resource holds 150 to start.</li><li>Storage Shed +50, Storehouse +150 (for every resource).</li>
+    <li>Granary +200 for food only.</li><li>Town Hall +50 / +100 / +150 by level.</li>
+    <li>Starter Pack: +300 for every resource, for good.</li>
+    <li>Gamepasses: 5x Storage, or Infinite Storage.</li></ul></div>
+  </div>
+  <div class="cols">
+   <div class="panel stack"><h3><span class="crown">Coins</span>: earning</h3><ul class="dots">
+    <li><b>Work</b>: every load a gatherer brings back +0.1, every batch a crafter finishes +0.3, Builders earn a little while they build.</li>
+    <li><b>Meals and drinks</b>: a citizen eating from the stores pays 1. Breakfast or lunch at a Tavern, Bakery or Kitchen pays 2, an Ale at the Tavern 3 (a hot cider 1). Market, Music Hall and Trading House visits pay 1.</li>
+    <li><b>Taxes</b>, every minute, per adult: 0.1 at the camp, then 0.25 / 0.5 / 0.75 with Town Hall I / II / III.</li>
+    <li><b>Selling</b> goods from the Bag. Each Market Stall adds +10%, up to +50%.</li>
+    <li><b>Events</b>: catch a golden animal (+30), sell to the traveling merchant, birthdays (+5).</li>
+    <li><b>Caves</b> (visitors and helpers), rewards, goals and badges.</li></ul></div>
+   <div class="panel stack"><h3><span class="crown">Coins</span>: spending</h3><ul class="dots">
+    <li>War Room upgrades, training at the Barracks and the Armory (see the Army chapter).</li>
+    <li>The traveling merchant's offers.</li></ul></div>
+   <div class="panel stack"><h3><span class="gemtxt">Gems</span></h3><ul class="dots">
+    <li>Bought in the Shop with Robux (25 / 50 / 100 / 250). A new world starts with 35.</li>
+    <li>The old Crowns became Gems one for one when GAV43 came out.</li>
+    <li>Finish construction or an upgrade right now: 1 Gem per minute left.</li>
+    <li>Trade for Coins in the Shop: 1 Gem = 5 Coins.</li></ul></div>
+  </div>
+  <h3>Sell prices (Coins each, before Market bonus)</h3>
+  <div class="tablewrap"><table><thead><tr><th>Good</th><th class="r">Coins</th><th>Good</th><th class="r">Coins</th></tr></thead><tbody>
+   ${Array.from({length:Math.ceil(sells.length/2)},(_,i)=>{const a=sells[i],b=sells[i+Math.ceil(sells.length/2)];return `<tr><td>${itemChip(a[0])}</td><td class="r num crown">${fmt(a[1])}</td><td>${b?itemChip(b[0]):""}</td><td class="r num crown">${b?fmt(b[1]):""}</td></tr>`;}).join("")}
+  </tbody></table></div>
+  <p class="muted">Raw materials and food sell by rarity: Common 0.08, Uncommon 0.2, Rare 0.6, Epic 1.5.</p>
+  <h3>War Room</h3>
+  <p class="muted lede">Opens with the Town Hall. Spend Coins on offense and defense for the threats to come. Some levels need a higher Town Hall or extra goods.</p>
+  <div class="tablewrap"><table><thead><tr><th>Upgrade</th><th>Side</th><th>Does</th><th>Coins per level</th><th>Town Hall needed</th><th>Extra goods</th></tr></thead><tbody>
+   ${MILITARY.map(([n,s,d,c,h,g])=>`<tr><td><b>${n}</b></td><td>${s}</td><td>${d}</td><td class="num crown">${c.join(" / ")}</td><td class="num">${h.map(x=>["","I","II","III"][x]).join(" / ")}</td><td>${g?g.join(" / "):"—"}</td></tr>`).join("")}
+  </tbody></table></div>
+  <div class="note">Soldiers and archers are trained at the ${bld("barracks")}. Ranks, patrols and the Armory are in the ${link("army","Army")} chapter. Every Town Hall level adds +10 Defense.</div>`; },
+
+army(){ const U=ARMY.units, roman=["","I","II","III"], hrs=t=>t?(t/3600)+" h":"—";
+  const unitRows=line=>U.filter(u=>u.line===line).map(u=>`<tr><td><b>${u.name}</b>${u.tier?` <span class="muted">tier ${roman[u.tier]}</span>`:""}</td><td class="num">${u.atk}</td><td class="num">${u.def}</td><td class="num crown">${u.coins?fmt(u.coins):"—"}</td><td class="num">${hrs(u.time)}</td><td class="num">${u.level?roman[u.level]:"—"}</td><td>${u.desc}</td></tr>`).join("");
+  const goods=g=>g?Object.entries(g).map(([k,v])=>itemChip(k,v)).join(" "):"—";
+  const arms=`<div class="tablewrap"><table><thead><tr><th>Track</th><th>Tier</th><th class="r">Coins</th><th>Goods</th><th class="r">Town Hall</th><th>Does</th></tr></thead><tbody>${ARMY.arms.map(a=>a.tiers.map((t,i)=>`<tr><td>${i===0?`<b>${a.name}</b><br><span class="muted">${a.line==="all"?"every unit":a.line==="soldier"?"soldiers":"archers"}</span>`:""}</td><td><b>${t.name}</b>${i===0?' <span class="muted">(start)</span>':""}</td><td class="r num crown">${t.coins?fmt(t.coins):"—"}</td><td>${goods(t.goods)}</td><td class="r num">${t.hall?roman[t.hall]:"—"}</td><td>${t.desc}</td></tr>`).join("")).join("")}</tbody></table></div>`;
+  return `${head("Army","Soldiers, archers and the Armory",`Build a ${bld("barracks")}, click it and press Train. Training costs Coins and takes real time, even while you're offline. Your army then guards the town on its own, using every wall, gate and tower you've built.`)}
+  <h3>Soldiers</h3>
+  <p class="muted lede">${ARMY.lines[0].desc}</p>
+  <div class="tablewrap"><table><thead><tr><th>Rank</th><th>Attack</th><th>Defense</th><th>Coins</th><th>Training</th><th>Barracks</th><th>About</th></tr></thead><tbody>${unitRows("soldier")}</tbody></table></div>
+  <h3>Archers</h3>
+  <p class="muted lede">${ARMY.lines[1].desc}</p>
+  <div class="tablewrap"><table><thead><tr><th>Rank</th><th>Attack</th><th>Defense</th><th>Coins</th><th>Training</th><th>Barracks</th><th>About</th></tr></thead><tbody>${unitRows("archer")}</tbody></table></div>
+  <div class="cols">
+   <div class="panel stack" style="align-content:start"><h3>Training</h3><ul class="dots">
+    <li>Each Barracks has ${ARMY.slots.join(" / ")} training spots at level I / II / III. More Barracks add more spots.</li>
+    <li>Pick who trains with the arrows on each card. Unassigned citizens and Recruits go first, then soldiers of a lower rank in the same line (a promotion), then other workers. Limited Legendary-and-up jobs are never picked.</li>
+    <li>Trainees take the Recruit job and practice at the Barracks: swordwork, or target shooting for archers.</li>
+    <li>Finish now with Gems (1 per minute left), or Stop to get every Coin back. Giving a trainee another job also stops their training and refunds it.</li>
+   </ul></div>
+   <div class="panel stack" style="align-content:start"><h3>Militia</h3><ul class="dots">
+    <li>The old ways still work: give a citizen the Recruit job (2 minutes, needs Weapons), or use Quick militia in the War Room (25 Coins + 1 Weapons).</li>
+    <li>Both make Militia: 5 Attack, 2 Defense, always with a spear. Militia can train up to any soldier or archer rank later.</li>
+    <li>A Paladin counts as four Militia.</li>
+   </ul></div>
+   <div class="panel stack" style="align-content:start"><h3>Patrols</h3><ul class="dots">
+    <li>Archers climb watchtowers first (one each), then Castle Gates (three each) and castle walls (${bld("watchtower")} ${bld("castlegate")} ${bld("castlewall")}), keep watch over the merlons and take aim now and then. Every 10 minutes they move along one post.</li>
+    <li>Soldiers stand guard either side of each Castle Gate, outside, and walk the inside of your walls and palisades.</li>
+    <li>No walls? They patrol the streets and the ring round town. Knights and Rangers also guard the Town Hall door.</li>
+    <li>With castle walls, a Castle Gate or a watchtower built, archers defend twice as well.</li>
+   </ul></div>
+  </div>
+  <h3>The Armory</h3>
+  <p class="muted lede">In the War Room. Each track upgrades your whole army at once, and the new gear shows up on them straight away.</p>
+  ${arms}
+  <div class="note">The War Room's older upgrades (Iron Spearheads, Soldier Armor and the rest) still add to every unit. Attack and defense get you ready for the enemies coming in a future update.</div>`; },
+
+life(){ return `${head("Citizen life","Every citizen has a day of their own",`Citizens follow the town clock: breakfast, work or school, lunch, an evening out and bed. What they do depends on their personality and on which buildings your town has.`)}
+  <div class="cols">
+   <div class="panel stack"><h3>Personalities</h3><p class="muted">Shown on each citizen's card. Every citizen has one for life.</p><div class="tablewrap"><table><tbody>
+    <tr><td><b>Early bird</b></td><td>Never misses breakfast</td></tr>
+    <tr><td><b>Social butterfly</b></td><td>Almost every evening at the Tavern with friends</td></tr>
+    <tr><td><b>Homebody</b></td><td>Heads home early to relax</td></tr>
+    <tr><td><b>Hard worker</b></td><td>Rarely takes a break</td></tr>
+    <tr><td><b>Foodie</b></td><td>Breakfast and lunch out, every day</td></tr>
+    <tr><td><b>Devout</b></td><td>Evenings at the Chapel, Snap Shrine or Obelisk</td></tr>
+    <tr><td><b>Curious</b></td><td>Music Hall, Academy, Market and the fountain</td></tr>
+   </tbody></table></div></div>
+   <div class="panel stack"><h3>A day in town</h3><div class="tablewrap"><table><tbody>
+    <tr><td class="num">4:12</td><td>Wake up</td></tr>
+    <tr><td class="num">5:00 to 8:30</td><td>Breakfast at the nearest ${bld("tavern")}, ${bld("bakery")} or ${bld("kitchen")}</td></tr>
+    <tr><td class="num">7:00 to 14:00</td><td>Children at ${bld("school")}, an Elder teaching</td></tr>
+    <tr><td class="num">11:30 to 13:15</td><td>Lunch for some workers</td></tr>
+    <tr><td class="num">14:00</td><td>Kids play on swings, sandboxes and picnic tables</td></tr>
+    <tr><td class="num">17:20 to 21:00</td><td>An evening out, or home early</td></tr>
+    <tr><td class="num">21:00</td><td>Bed</td></tr>
+   </tbody></table></div></div>
+  </div>
+  <div class="cols">
+   <div class="panel stack"><h3>Eating out</h3><ul class="dots">
+    <li>At the Tavern they sit at the dining tables, next to friends when they can (8 seats, more standing).</li>
+    <li>Each meal takes one food from the stores, cooked food first (Stew, Fruit Pie, Bread, Rations), and pays <span class="crown">2 Coins</span>.</li>
+    <li>In the evening the Tavern sells Ale (<span class="crown">3 Coins</span>, uses 1 Ale) or hot cider when there's no Ale (<span class="crown">1 Coin</span>). Build a Brewery to keep the Ale flowing.</li>
+    <li>A little coin pops up over each citizen who pays.</li></ul></div>
+   <div class="panel stack"><h3>School</h3><ul class="dots">
+    <li>With a ${bld("school")}, children walk there every morning and sit at the desks (extra kids sit on the floor).</li>
+    <li>Time at school adds up: kids grow up with +1 Wit, or +2 after a lot of school.</li>
+    <li>A School also still makes children grow up 50% faster.</li></ul></div>
+   <div class="panel stack"><h3>Indoor workers</h3><ul class="dots">
+    <li>Cooks, Crafters, Smiths, Healers, Masons and the other workshop jobs stay inside their workplace between jobs, instead of wandering around town.</li>
+    <li>They still pop out for breakfast or lunch and go home at night.</li></ul></div>
+  </div>`; },
+
+world(){ return `${head("World","Your planet",`Every world is generated from its seed. Pick a classic round planet you can fully explore, or an Endless world that keeps growing as you explore.`)}
+  <div class="panel stack"><h3>Biomes (${BIOMES.length})</h3><div class="chips">${BIOMES.map(b=>`<span class="chip">${b}</span>`).join("")}</div><p class="muted">Discovering every biome is tracked in the Explored card at the top right.</p></div>
+  <div class="cols">
+   <div class="panel stack"><h3>Exploring</h3><ul class="dots">
+    <li>Most of the planet starts under fog. Roll an ${jobChip("Explorer")}, then tap a foggy area next to land you know.</li>
+    <li>A ${bld("watchtower")} clears the fog around it, a ${bld("lighthouse")} much further.</li>
+    <li>A Map Fragment (Rare roll) lifts the fog from a random area.</li></ul></div>
+   <div class="panel stack"><h3>Day and night</h3><ul class="dots">
+    <li>A day is about 19 real minutes: 14 of daylight, 5 of night.</li><li>Rolls are 25% faster at night.</li>
+    <li>Windows light up, citizens head to bed, fireflies come out.</li></ul></div>
+   <div class="panel stack"><h3>Seasons</h3><p>Each season lasts 5 days.</p><ul class="dots">
+    <li><b>Spring</b>: flowers and gentle rain.</li><li><b>Summer</b>: long sunny days, hardly any rain.</li>
+    <li><b>Autumn</b>: bigger harvests, +1 food per trip.</li><li><b>Winter</b>: snow and blizzards are likely.</li></ul></div>
+  </div>
+  <div class="panel stack"><h3>World events</h3><p class="muted">At most one at a time.</p><div class="cols">
+   <div><b>Traveling merchant</b><p>Turns up with an offer to buy or sell goods for Coins.</p></div>
+   <div><b>Meteor shower</b><p>At night. +50% Snap luck while it lasts.</p></div>
+   <div><b>Harvest festival</b><p>Bonus food for the town.</p></div>
+   <div><b>Golden animal</b><p>Your Hunters can catch it for 30 Coins.</p></div>
+   <div><b>Weather</b><p>Rain, thunderstorms with lightning, snow and blizzards.</p></div>
+  </div></div>`; },
+
+visiting(){ return `${head("Visiting","Play together",`Anyone can visit an online world from Players online. Visitors walk around with their own avatar and see the owner as a giant hand.`)}
+  <div class="cols">
+   <div class="panel stack"><h3>As a visitor</h3><ul class="dots">
+    <li>Main menu → Players online → <b>Visit</b>. No request needed. Worlds show their Likes, most liked first.</li>
+    <li>You arrive as a looker: walk, look around and Like the world.</li>
+    <li>If the owner makes you a <b>helper</b>, open Bag → Equipment, pick a tool and press USE (or E). Everything you gather goes to their colony.</li>
+    <li>Helpers can explore mountain caves for Coins and treasure chests, and fight skeletons.</li>
+    <li>Set your own walk speed (1 to 35) in Options.</li></ul></div>
+   <div class="panel stack"><h3>As the owner</h3><ul class="dots">
+    <li>The <b>Visitors</b> button (bottom right) lists who's in your world (8 max).</li>
+    <li><b>Make helper</b> / <b>Stop helping</b> per visitor, or <b>Remove</b> them.</li>
+    <li><b>Allow visitors</b> switch: turn it off and nobody new can join. Your choice is saved.</li>
+    <li><b>Invite friends</b>: friends you invite can join for the next hour, even with joining off.</li>
+    <li>Tap a visitor to pick them up with your god hand, tap again to put them down.</li></ul></div>
+  </div>
+  <div class="cols">
+   <div class="panel stack"><h3>Likes</h3><p>Each visitor can Like a world once. <b>Every Like makes its citizens work 1% harder</b>: more gathering and crafting. Your HUD shows it as LIKES +N% WORK. Each save file has its own Likes, and the Most liked leaderboard ranks towns.</p></div>
+   <div class="panel stack"><h3>Helper tools</h3><div class="tablewrap"><table><tbody>${HELPER_TOOLS.map(([n,d])=>`<tr><td><b>${n}</b></td><td>${d}</td></tr>`).join("")}</tbody></table></div><p class="muted">One use every 1.3 seconds.</p></div>
+  </div>`; },
+
+rewards(){ return `${head("Rewards","Daily, weekly and forever",`Open Rewards from the dock (key G). A red dot means something is ready to claim.`)}
+  <h3>Daily login streak</h3>
+  <div class="cal">${LOGIN.map(([c,x,big],i)=>`<div class="${big?"big":""}"><small>Day ${i+1}</small><b class="crown num">${c}</b><small>Coins${x?" + "+x:""}</small></div>`).join("")}</div>
+  <div class="cols">
+   <div class="panel stack"><h3>Daily goals</h3><p class="muted">3 picked from these each day.</p><div class="tablewrap"><table><tbody>${DAILY.map(([t,c])=>`<tr><td>${t}</td><td class="r num crown">${c}</td></tr>`).join("")}</tbody></table></div></div>
+   <div class="panel stack"><h3>Weekly goals</h3><p class="muted">3 picked from these each week.</p><div class="tablewrap"><table><tbody>${WEEKLY.map(([t,c,x])=>`<tr><td>${t}</td><td class="r num"><span class="crown">${c}</span>${x?" + "+x:""}</td></tr>`).join("")}</tbody></table></div></div>
+  </div>
+  <div class="panel stack"><h3>Visitor rewards</h3><div class="tablewrap"><table><thead><tr><th>Track</th><th>Goal</th><th class="r">Tier 1</th><th class="r">Tier 2</th><th class="r">Tier 3</th><th class="r">Tier 4</th></tr></thead><tbody>
+   ${VISITOR_TIERS.map(([n,t,g,c])=>`<tr><td><b>${n}</b></td><td>${t}</td>${g.map((x,i)=>`<td class="r num">${x.toLocaleString()} → <span class="crown">${c[i]}</span></td>`).join("")}</tr>`).join("")}
+  </tbody></table></div></div>
+  <div class="cols">
+   <div class="panel stack"><h3>Badges</h3><div class="tablewrap"><table><tbody>${BADGES.map(([n,d,c])=>`<tr><td><b>${n}</b><br><span class="muted">${d}</span></td><td class="r num crown">${c}</td></tr>`).join("")}</tbody></table></div></div>
+   <div class="panel stack"><h3>Leaderboards</h3><p class="muted">Main menu → Leaderboards. Your best is kept.</p><ul class="plain">${BOARDS.map(([n,u])=>`<li><b>${n}</b> <span class="muted">· ${u}</span></li>`).join("")}</ul></div>
+  </div>`; },
+
+shop(){ return `${head("Shop","Gamepasses and boosts",`Open Shop from the dock (key P). Prices are in Robux.`)}
+  <div class="cols">
+   <div class="panel stack"><h3>Gamepasses (forever)</h3><div class="tablewrap"><table><tbody>${PASSES.map(([n,p,d])=>`<tr><td><b>${n}</b><br><span class="muted">${d}</span></td><td class="r num">R$ ${p}</td></tr>`).join("")}</tbody></table></div></div>
+   <div class="panel stack"><h3>Products</h3><div class="tablewrap"><table><tbody>${PRODUCTS.map(([n,p,d,soon])=>`<tr><td><b>${n}</b> ${soon?'<span class="soon">Not on sale yet</span>':""}<br><span class="muted">${d}</span></td><td class="r num">R$ ${p}</td></tr>`).join("")}</tbody></table></div></div>
+  </div>
+  <div class="panel stack"><h3>Free group perks</h3><p>Join the game's Roblox group to unlock <b>2x world speed</b> (set it in Options; only the world owner sets it) and <b>Auto-roll</b>.</p></div>`; },
+
+controls(){ return `${head("Controls","PC and mobile",`Turn on Draggable panels in Options to move any panel. Panels always stay on screen. Reset panels puts them back.`)}
+  <div class="cols">
+   <div class="panel stack"><h3>PC</h3><div class="tablewrap"><table><tbody>
+    <tr><td>Move the camera</td><td>Drag, or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrows</td></tr>
+    <tr><td>Turn and tilt</td><td>Right-drag, or <kbd>Q</kbd> <kbd>E</kbd></td></tr><tr><td>Zoom</td><td>Scroll</td></tr>
+    <tr><td>Build</td><td><kbd>N</kbd></td></tr><tr><td>Bag</td><td><kbd>B</kbd></td></tr><tr><td>People</td><td><kbd>C</kbd></td></tr>
+    <tr><td>Map</td><td><kbd>M</kbd></td></tr><tr><td>Fly home</td><td><kbd>H</kbd></td></tr><tr><td>War Room</td><td><kbd>K</kbd></td></tr>
+    <tr><td>Shop</td><td><kbd>P</kbd></td></tr><tr><td>Rewards</td><td><kbd>G</kbd></td></tr><tr><td>Options</td><td><kbd>O</kbd></td></tr>
+    <tr><td>Turn a building while placing</td><td><kbd>R</kbd></td></tr><tr><td>Terrain height / brush</td><td><kbd>-</kbd> <kbd>=</kbd> / <kbd>[</kbd> <kbd>]</kbd></td></tr>
+    <tr><td>Use a helper tool (visiting)</td><td><kbd>E</kbd> or click</td></tr>
+   </tbody></table></div></div>
+   <div class="panel stack"><h3>Mobile</h3><ul class="dots">
+    <li><b>Default</b>: one finger drags the camera, pinch to zoom, twist two fingers to turn, slide two fingers up or down to tilt. The arrow buttons in the corner turn and tilt too.</li>
+    <li><b>Camera thumbstick</b> (Options): the stick moves the camera and a swipe with your other thumb turns it, like normal Roblox controls.</li>
+    <li><b>Building</b>: tap where to put it, then PLACE, TURN or DONE.</li>
+    <li>The arrows on the resource bar and the dock tuck them away to free up the screen.</li></ul></div>
+  </div>`; },
+};
+const link=(ch,t)=>`<a href="#${ch}" data-go="${ch}">${t}</a>`;
+const bld=id=>`<button class="chip" data-open="bld:${id}">${esc(BLD[id].name)}</button>`;
+function tileSub(i){
+  if(i.cat==="Material"||i.cat==="Food") return (GATHERED_BY[i.name]||["Gatherer"]).join(", ")+"s collect it";
+  if(i.cat==="Goods"){ const r=RECIPES.find(r=>r.out===i.name); return "Made by "+r.job+"s"; }
+  if(i.cat==="Job") return "Unlocks the "+i.job+" job";
+  return i.note;
+}
+
+/* ============================================================ snap lab */
+function wireLab(){
+  const L=state.luck, $=id=>document.getElementById(id);
+  $("lPower").value=L.power; $("lShrines").value=L.shrines; $("lCrystals").value=L.crystals; $("lPass").checked=L.pass; $("lHour").checked=L.hour; $("lMeteor").checked=L.meteor;
+  const upd=()=>{
+    L.power=+$("lPower").value; L.shrines=+$("lShrines").value; L.crystals=+$("lCrystals").value; L.pass=$("lPass").checked; L.hour=$("lHour").checked; L.meteor=$("lMeteor").checked;
+    $("lPowerV").textContent=L.power+"%"; $("lShrinesV").textContent=L.shrines; $("lCrystalsV").textContent=L.crystals;
+    const base=1+L.power/50+L.shrines*.2+L.crystals*.25, luck=base*(L.pass?4:1)*(L.hour?2:1)*(L.meteor?1.5:1);
+    $("luckOut").textContent="x"+luck.toFixed(2);
+    $("luckWhy").textContent=`Base ${base.toFixed(2)}`+(L.pass?" × 4 pass":"")+(L.hour?" × 2 Lucky Hour":"")+(L.meteor?" × 1.5 meteors":"")+". A new world starts at 5% power: x1.10.";
+    const {w,t}=luckWeights(luck);
+    document.querySelectorAll("#ladder div").forEach(d=>d.style.flexBasis=(w[d.dataset.r]/t*100)+"%");
+    $("oddsBody").innerHTML=RAR.map(r=>{const p=w[r]/t, each=p/RCOUNT[r]; return `<tr class="click" data-irar-go="${r}"><td><span class="r-${r} rtext"><i class="gem"></i> ${r}</span></td><td class="r num">${RCOUNT[r]}</td><td class="r num">${pct(p)}</td><td class="r num">${pct(each)} <span class="muted">(1 in ${Math.round(1/each).toLocaleString()})</span></td></tr>`;}).join("");
+  };
+  ["lPower","lShrines","lCrystals","lPass","lHour","lMeteor"].forEach(id=>$(id).addEventListener("input",upd));
+  upd();
+}
+
+/* ============================================================ detail sheet */
+const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim");
+let lastFocus=null;
+function openSheet(key){
+  const [kind,...rest]=key.split(":"), id=rest.join(":");
+  let html="";
+  if(kind==="item"){
+    const i=ITEM[id]; if(!i) return;
+    const kindLabel={Material:"Material",Food:"Food",Goods:i.food?"Crafted food":"Crafted good",Special:"Special roll",Job:"Job unlock"}[i.cat];
+    const sv=sellOf(id);
+    html=`<h2 id="sheetTitle" class="r-${i.rarity}"><i class="gem"></i>${esc(id)}</h2>
+     <div class="meta"><span class="chip r-${i.rarity}"><span class="rtext">${i.rarity}</span></span><span class="chip">${kindLabel}</span>${i.cat!=="Goods"?`<span class="chip num">${pct(chance(id))} per Snap</span>`:""}${sv?`<span class="chip num"><span class="crown">${fmt(sv)}</span>&nbsp;Coins each</span>`:""}</div>
+     ${i.note&&i.note!=="food"?`<p class="lede">${esc(i.note)}</p>`:""}
+     <div class="blk"><h3>How to get it</h3><ul class="how">${howToGet(id).map(h=>`<li>${h}</li>`).join("")}</ul></div>
+     ${i.cat==="Job"?`<div class="blk"><h3>The job</h3><p>${esc(JOB[i.job].desc)}</p><div class="chips">${jobChip(i.job)}</div></div>`:""}
+     ${usedFor(id).map(u=>`<div class="blk"><h3>Used for: ${u.h}</h3>${u.html}</div>`).join("")}`;
+  } else if(kind==="job"){
+    const J=JOB[id]; if(!J) return;
+    const gathers=GATHERS[id], makes=RECIPES.filter(r=>r.job===id), st=J.station;
+    const places=[...new Set(makes.flatMap(r=>r.at))];
+    html=`<h2 id="sheetTitle" class="${J.rarity?"r-"+J.rarity:""}">${J.rarity?'<i class="gem"></i>':""}${esc(id)}</h2>
+     <div class="meta">${J.rarity?`<span class="chip r-${J.rarity}"><span class="rtext">${J.rarity}</span></span><span class="chip num">${pct(chance(id+" Job"))} per Snap</span>`:'<span class="chip">Not rolled</span>'}</div>
+     <p class="lede">${esc(J.desc)}</p>
+     <div class="blk"><h3>How to unlock</h3><p>${J.rolled?`Roll ${itemChip(id+" Job")} with Snap, then give it to an adult in People.`:esc(J.desc)}</p>${J.rolled&&ROLL_WHEN[id+" Job"]?`<p><b>Only rolls ${esc(WHEN[ROLL_WHEN[id+" Job"]])}.</b></p>`:""}${J.rolled&&LIMIT[J.rarity]?`<p><b>Limited:</b> only ${LIMIT[J.rarity]===1?"1 citizen":LIMIT[J.rarity]+" citizens"} can have this job at a time.</p>`:""}${BUILD.find(b=>b.needsJob===id)?`<p>Unlocks the ${bldChip(BUILD.find(b=>b.needsJob===id).id)} Wonder in the Build menu.</p>`:""}</div>
+     ${gathers?`<div class="blk"><h3>Collects (once learned)</h3><div class="chips">${gathers.map(n=>itemChip(n)).join("")}</div></div>`:""}
+     ${makes.length?`<div class="blk"><h3>Makes</h3>${makes.map(recipeInline).join("")}</div>`:""}
+     ${places.length?`<div class="blk"><h3>Works at</h3><div class="chips">${places.map(bldChip).join("")}</div></div>`:""}
+     ${id==="Builder"?`<div class="blk"><h3>Tips</h3><p>More Builders means more sites going up at once. A site only counts down while a Builder is standing at it.</p></div>`:""}
+     ${id==="Explorer"?`<div class="blk"><h3>Tips</h3><p>Explorers only head into fog next to land you've already explored.</p></div>`:""}`;
+  } else if(kind==="bld"){
+    const b=BLD[id]; if(!b) return;
+    const makes=RECIPES.filter(r=>r.at.includes(id));
+    const canUp=!b.noUp;
+    html=`<h2 id="sheetTitle" class="${b.rarity?"r-"+b.rarity:""}">${b.rarity?'<i class="gem"></i>':""}${esc(b.name)}</h2>
+     <div class="meta">${b.rarity?`<span class="chip r-${b.rarity}"><span class="rtext">${b.rarity}</span></span>`:""}${b.needsJob?jobChip(b.needsJob):""}<span class="chip">${b.sub}</span>${b.foot?`<span class="chip num">${b.foot}×${b.foot} tiles</span>`:""}${b.home?`<span class="chip num">${b.home} home${b.home>1?"s":""}</span>`:""}${b.interior?`<span class="chip">Has an inside</span>`:""}</div>
+     <p class="lede">${esc(b.desc)}</p>
+     <div class="blk"><h3>${b.hall?"Costs (upgrade the camp)":"Costs"}</h3><div class="chips">${costChips(b.cost)}</div><p class="muted">Takes ${time(buildTime(b,1))} to build.</p></div>
+     ${makes.length?`<div class="blk"><h3>Workers make here</h3>${makes.map(recipeInline).join("")}</div>`:""}
+     ${b.station&&!makes.length?`<div class="blk"><h3>Workers</h3><div class="chips">${jobChip(b.station)}</div></div>`:""}
+     ${canUp?`<div class="blk"><h3>Upgrades</h3><div class="tablewrap"><table><thead><tr><th>Level</th><th>Costs</th><th class="r">Time</th></tr></thead><tbody>${[2,3].map(l=>`<tr><td><b>${["","I","II","III"][l]}</b></td><td><div class="chips">${costChips(upCost(b,l))}</div></td><td class="r num">${time(buildTime(b,l))}</td></tr>`).join("")}</tbody></table></div>
+       <p class="muted">${b.hall?`Each level: +${HALL_STORE[2]} / +${HALL_STORE[3]} storage, more taxes, more room for citizens (+${HALL_CAP[2]} / +${HALL_CAP[3]}), stronger defenses.`:upText(b)} Finish early for 1 Gem per minute left.</p></div>`:`<div class="blk"><h3>Upgrades</h3><p class="muted">Walls and palisades don't have levels.</p></div>`}`;
+  }
+  sheet.innerHTML=`<button class="x" id="sheetClose">Close</button>${html}`;
+  if(sheet.hidden) lastFocus=document.activeElement;
+  sheet.hidden=false; scrim.hidden=false; sheet.scrollTop=0;
+  document.getElementById("sheetClose").focus();
+}
+function upText(b){ const t=[]; if(b.home) t.push(`+${b.home} home each level`); if(b.interior) t.push("bigger rooms"); if(b.storage) t.push(`+${b.storage} storage`); if(b.foodStorage) t.push(`+${b.foodStorage} food storage`); if(b.station) t.push(`${b.station}s make +1 more each time`); if(b.id==="barracks") t.push("+1 training spot, unlocks tier II and III ranks, Recruits train 50% faster"); return t.length?"Each level: "+t.join(", ")+".":"Each level makes it bigger and fancier."; }
+function closeSheet(){ sheet.hidden=true; scrim.hidden=true; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
+scrim.addEventListener("click",closeSheet);
+
+/* ============================================================ search */
+const q=document.getElementById("q"), res=document.getElementById("results");
+const INDEX=[
+ ...ALL_ITEMS.map(i=>({t:i.name,k:i.cat==="Job"?"Job unlock":i.cat==="Goods"?"Crafted":i.cat,r:i.rarity,key:"item:"+i.name})),
+ ...Object.keys(JOB).map(j=>({t:j,k:"Job",r:JOB[j].rarity,key:"job:"+j})),
+ ...BUILD.map(b=>({t:b.name,k:"Building",key:"bld:"+b.id})),
+ ...CH.map(([id,n])=>({t:n,k:"Chapter",go:id})),
+ ...[["Likes","visiting"],["Helpers","visiting"],["War Room","town"],["Barracks training","army"],["Armory","army"],["Patrols","army"],["Knight","army"],["Ranger","army"],["Militia","army"],["Taxes","town"],["Power","town"],["Babies","town"],["Storage","town"],["Seasons","world"],["Biomes","world"],["Meteor shower","world"],["Luck","snap"],["Gamepasses","shop"],["Login rewards","rewards"],["Badges","rewards"],["Leaderboards","rewards"],["Furniture","buildings"],["Terrain tools","buildings"],["Paths","buildings"],["Decorations","buildings"],["Thumbstick","controls"],["Keyboard shortcuts","controls"]].map(([t,g])=>({t,k:"Topic",go:g})),
+];
+let sel=0, hits=[];
+function doSearch(){
+  const s=q.value.trim().toLowerCase();
+  if(!s){res.hidden=true;return;}
+  hits=INDEX.map(e=>{const t=e.t.toLowerCase(); const sc=t===s?0:t.startsWith(s)?1:t.includes(s)?2:9; return [sc,e];}).filter(x=>x[0]<9).sort((a,b)=>a[0]-b[0]||a[1].t.localeCompare(b[1].t)).slice(0,12).map(x=>x[1]);
+  sel=0;
+  res.innerHTML=hits.length?hits.map((h,i)=>`<button data-hit="${i}" class="${i===0?"on":""}">${h.r?`<i class="gem r-${h.r}"></i>`:""}<span>${esc(h.t)}</span><span class="kind">${h.k}</span></button>`).join(""):`<div class="none">Nothing called “${esc(q.value)}”. Try a shorter word.</div>`;
+  res.hidden=false;
+}
+function pick(h){ res.hidden=true; q.value=""; if(h.go) go(h.go); else openSheet(h.key); }
+q.addEventListener("input",doSearch);
+q.addEventListener("keydown",e=>{
+  if(res.hidden) return;
+  const btns=res.querySelectorAll("button");
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); if(!btns.length) return; btns[sel].classList.remove("on"); sel=(sel+(e.key==="ArrowDown"?1:-1)+btns.length)%btns.length; btns[sel].classList.add("on"); btns[sel].scrollIntoView({block:"nearest"}); }
+  else if(e.key==="Enter"&&hits[sel]){ e.preventDefault(); pick(hits[sel]); }
+  else if(e.key==="Escape"){ res.hidden=true; }
+});
+document.addEventListener("click",e=>{ if(!e.target.closest(".search")) res.hidden=true; });
+
+/* ============================================================ clicks */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-open],[data-ch],[data-go],[data-icat],[data-irar],[data-bsub],[data-hit],[data-irar-go],#sheetClose");
+  if(!t) return;
+  if(t.id==="sheetClose") return closeSheet();
+  if(t.dataset.hit!=null) return pick(hits[+t.dataset.hit]);
+  if(t.dataset.open) return openSheet(t.dataset.open);
+  if(t.dataset.ch) return go(t.dataset.ch);
+  if(t.dataset.go){ e.preventDefault(); closeSheet(); return go(t.dataset.go); }
+  if(t.dataset.icat){ state.itemCat=t.dataset.icat; return render(); }
+  if(t.dataset.irar){ state.itemRar=t.dataset.irar; return render(); }
+  if(t.dataset.irarGo){ state.itemRar=t.dataset.irarGo; state.itemCat="All"; return go("items"); }
+  if(t.dataset.bsub){ state.bSub=t.dataset.bsub; return render(); }
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&!sheet.hidden) closeSheet();
+  if(e.key==="/"&&document.activeElement!==q&&!e.target.closest("input")){ e.preventDefault(); q.focus(); }
+});
+tabsEl.addEventListener("keydown",e=>{
+  if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;
+  const i=CH.findIndex(c=>c[0]===state.ch); const n=CH[(i+(e.key==="ArrowRight"?1:-1)+CH.length)%CH.length][0];
+  go(n); document.getElementById("tab-"+n).focus();
+});
+window.addEventListener("hashchange",()=>{ const h=location.hash.slice(1); if(h&&h!==state.ch) go(h,false); });
+
+/* boot */
+(function(){ let start=location.hash.slice(1); if(!VIEWS[start]){ try{start=localStorage.getItem("codex.ch")||"start"}catch(e){start="start"} } state.ch=VIEWS[start]?start:"start"; render(); })();
+</script>
+
+</body></html>
